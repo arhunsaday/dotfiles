@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Export a Claude conversation to Markdown.
+"""Export a Claude conversation to Markdown, or download its artifacts.
 
 Sources:
   code     ~/.claude/projects/**/<session>.jsonl  (local, no auth)
   desktop  claude.ai API, authenticated with Claude Desktop's own session cookie
+  URL      https://claude.ai/code/artifact/<uuid>  (implies --artifacts)
 """
 
 import argparse
@@ -18,6 +19,7 @@ import subprocess
 import sys
 import tempfile
 import urllib.error
+import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
@@ -27,6 +29,24 @@ COOKIES_DB = Path.home() / "Library/Application Support/Claude/Cookies"
 DEFAULT_OUT = Path.home() / "Downloads" 
 UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36")
+
+# published artifacts: claude.ai hands out a version + token, the document lives on a
+# per-artifact usercontent host and comes wrapped in the web player's scaffolding
+FRAME_HEADERS = {"X-Frame-CP": "go", "X-Frame-Platform": "web", "X-Frame-Surface": "standalone"}
+FRAME_RUNTIME = re.compile(r"<!-- frame-runtime -->.*?<!-- /frame-runtime -->", re.S)
+ARTIFACT_URL = re.compile(r"https://claude\.ai/code/artifact/([0-9a-f-]{36})")
+PUBLISHED = re.compile(r"Published (?P<file>\S[^\n]*?) at "
+                       r"(?P<url>https://claude\.ai/code/artifact/(?P<uuid>[0-9a-f-]{36}))")
+
+ARTIFACT_EXT = {"text/html": ".html", "text/markdown": ".md", "text/plain": ".txt",
+                "image/svg+xml": ".svg", "application/vnd.ant.mermaid": ".mmd",
+                "application/vnd.ant.react": ".jsx"}
+CODE_EXT = {"python": ".py", "javascript": ".js", "typescript": ".ts", "jsx": ".jsx",
+            "tsx": ".tsx", "bash": ".sh", "shell": ".sh", "zsh": ".sh", "json": ".json",
+            "yaml": ".yml", "toml": ".toml", "sql": ".sql", "html": ".html", "css": ".css",
+            "swift": ".swift", "go": ".go", "rust": ".rs", "java": ".java", "c": ".c",
+            "cpp": ".cpp", "ruby": ".rb", "php": ".php", "lua": ".lua", "vim": ".vim",
+            "markdown": ".md", "text": ".txt"}
 
 
 def die(msg):
@@ -49,6 +69,18 @@ def local_time(ts):
 def slugify(text, limit=60):
     slug = re.sub(r"[^a-z0-9]+", "-", (text or "").lower()).strip("-")
     return slug[:limit].rstrip("-") or "conversation"
+
+
+def safe_name(name, fallback="artifact"):
+    return re.sub(r"[/\\:]+", "-", (name or "").strip())[:120] or fallback
+
+
+def unique(path):
+    stem, suffix, counter = path.stem, path.suffix, 2
+    while path.exists():
+        path = path.with_name(f"{stem}-{counter}{suffix}")
+        counter += 1
+    return path
 
 
 # --- pickers ---------------------------------------------------------------
@@ -234,24 +266,56 @@ def session_key(cookies):
             or keychain("claude-session-key", os.environ.get("USER", "")))
 
 
-def api(path, key):
-    request = urllib.request.Request(
-        f"https://claude.ai/api{path}",
-        headers={"Cookie": f"sessionKey={key}", "User-Agent": UA,
-                 "Accept": "application/json", "Accept-Encoding": "gzip",
-                 "anthropic-client-platform": "web_claude_ai"})
+def auth():
+    """claude.ai credentials, borrowed from Claude Desktop unless the env supplies them."""
+    if os.environ.get("CLAUDE_SESSION_KEY"):
+        key = os.environ["CLAUDE_SESSION_KEY"]
+        return key, org_uuid({}, key)
+    cookies = desktop_cookies()
+    key = session_key(cookies)
+    if not key:
+        die("No claude.ai session key found. Sign in to Claude Desktop, or set "
+            "CLAUDE_SESSION_KEY.")
+    return key, org_uuid(cookies, key)
+
+
+def http_get(url, headers):
+    response = urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=30)
+    body = response.read()
+    if response.headers.get("Content-Encoding") == "gzip":
+        body = gzip.decompress(body)
+    return body
+
+
+def api_headers(key, extra=None):
+    headers = {"Cookie": f"sessionKey={key}", "User-Agent": UA,
+               "Accept": "application/json", "Accept-Encoding": "gzip",
+               "anthropic-client-platform": "web_claude_ai"}
+    headers.update(extra or {})
+    return headers
+
+
+def error_body(err):
+    body = err.read()
     try:
-        response = urllib.request.urlopen(request, timeout=30)
+        body = gzip.decompress(body)
+    except (OSError, gzip.BadGzipFile):
+        pass
+    try:
+        return json.loads(body)
+    except (ValueError, TypeError):
+        return {}
+
+
+def api(path, key, extra=None):
+    try:
+        return json.loads(http_get(f"https://claude.ai/api{path}", api_headers(key, extra)))
     except urllib.error.HTTPError as err:
         if err.code in (401, 403):
             die("claude.ai rejected the session (expired?). Sign in again in Claude Desktop.")
         die(f"claude.ai request failed: {err.code} {err.reason}")
     except urllib.error.URLError as err:
         die(f"Could not reach claude.ai: {err.reason}")
-    body = response.read()
-    if response.headers.get("Content-Encoding") == "gzip":
-        body = gzip.decompress(body)
-    return json.loads(body)
 
 
 def org_uuid(cookies, key):
@@ -273,6 +337,32 @@ def front_window_title():
               'return ""')
     out = subprocess.run(["osascript", "-e", script], capture_output=True, text=True)
     return out.stdout.strip()
+
+
+def desktop_pick(args, key, org):
+    """The conversations to work on: picked, all, or the front / most recent one."""
+    conversations = api(f"/organizations/{org}/chat_conversations?limit={args.limit}", key)
+    if not conversations:
+        die("No conversations found on claude.ai.")
+    conversations.sort(key=lambda c: c.get("updated_at") or "", reverse=True)
+
+    if args.pick:
+        entries = [f"{local_time(c.get('updated_at'))}  {(c.get('name') or 'Untitled')[:70]}"
+                   for c in conversations]
+        index = choose(entries, "Claude Desktop conversations")
+        if index is None:
+            return None
+        return [conversations[index]]
+    if args.all:
+        return conversations
+    window = front_window_title()
+    return [next((c for c in conversations
+                  if c.get("name") and window and c["name"] in window), conversations[0])]
+
+
+def desktop_full(target, key, org):
+    return api(f"/organizations/{org}/chat_conversations/{target['uuid']}"
+               "?tree=True&rendering_mode=messages&render_all_tools=true", key)
 
 
 def render_desktop(conv, verbose):
@@ -317,6 +407,114 @@ def render_desktop(conv, verbose):
     return "\n".join(lines).rstrip() + "\n"
 
 
+# --- artifacts -------------------------------------------------------------
+
+def artifact_ext(mime, language):
+    return ARTIFACT_EXT.get(mime) or CODE_EXT.get((language or "").lower(), ".txt")
+
+
+def desktop_artifacts(conv):
+    """Replay a conversation's artifact and file-creation calls into final documents."""
+    order, docs = [], {}
+    for message in conv.get("chat_messages", []):
+        for block in message.get("content") or []:
+            if not isinstance(block, dict) or block.get("type") != "tool_use":
+                continue
+            data = block.get("input") or {}
+            if block.get("name") == "artifacts":
+                key = data.get("id") or data.get("title") or f"artifact-{len(order) + 1}"
+            elif data.get("path") and data.get("file_text") is not None:
+                key = data["path"]
+            else:
+                continue
+            doc = docs.get(key)
+            if doc is None:
+                doc = docs[key] = {"name": None, "title": key, "mime": None,
+                                   "language": None, "content": ""}
+                order.append(key)
+
+            if block.get("name") != "artifacts":                  # create_file / skills output
+                doc["name"] = Path(data["path"]).name
+                doc["content"] = data["file_text"]
+                continue
+            doc["title"] = data.get("title") or doc["title"]
+            doc["mime"] = data.get("type") or doc["mime"]
+            doc["language"] = data.get("language") or doc["language"]
+            if data.get("command") == "update" and data.get("old_str") is not None:
+                doc["content"] = doc["content"].replace(data["old_str"],
+                                                        data.get("new_str") or "", 1)
+            elif data.get("content") is not None:
+                doc["content"] = data["content"]
+
+    files = []
+    for key in order:
+        doc = docs[key]
+        name = doc["name"] or slugify(doc["title"]) + artifact_ext(doc["mime"], doc["language"])
+        files.append((safe_name(name), doc["content"]))
+    return files
+
+
+def code_artifacts():
+    """Artifacts published by Claude Code, newest first, per the local transcripts."""
+    found = {}
+    for path in PROJECTS_DIR.glob("*/*.jsonl"):
+        try:
+            mtime = path.stat().st_mtime
+        except OSError:
+            continue
+        for record in read_jsonl(path):
+            for block in (record.get("message") or {}).get("content") or []:
+                if not isinstance(block, dict) or block.get("type") != "tool_result":
+                    continue
+                text = block.get("content")
+                if isinstance(text, list):
+                    text = "\n".join(c.get("text", "") for c in text if isinstance(c, dict))
+                match = PUBLISHED.search(text or "")
+                if not match:
+                    continue
+                found[match["uuid"]] = {"uuid": match["uuid"], "url": match["url"],
+                                        "file": Path(match["file"]).name,
+                                        "project": path.parent.name.replace("-", "/"),
+                                        "mtime": mtime}
+    return sorted(found.values(), key=lambda a: a["mtime"], reverse=True)
+
+
+def frame_meta(uuid, key, org):
+    """Live version + asset token for a published artifact, retried in its owning org."""
+    for attempt in range(2):
+        try:
+            return json.loads(http_get(
+                f"https://claude.ai/api/frame/{uuid}?org={org}&via=user_open",
+                api_headers(key, FRAME_HEADERS)))
+        except urllib.error.HTTPError as err:
+            detail = error_body(err)
+            if not attempt and err.code == 403 and detail.get("owner_org"):
+                org = detail["owner_org"]
+                continue
+            if err.code in (401, 403):
+                die(f"claude.ai denied artifact {uuid} (expired session, or not yours).")
+            if err.code == 404:
+                die(f"Artifact {uuid} does not exist any more.")
+            die(f"claude.ai request failed: {err.code} {err.reason}")
+        except urllib.error.URLError as err:
+            die(f"Could not reach claude.ai: {err.reason}")
+
+
+def frame_download(uuid, key, org):
+    """A published artifact as a standalone page, minus the claude.ai player scaffolding."""
+    meta = frame_meta(uuid, key, org)
+    if not meta.get("ver") or not meta.get("assetToken"):
+        die(f"claude.ai returned no downloadable content for artifact {uuid}.")
+    url = (f"https://{uuid}.frame.claudeusercontent.com/_f/{meta['ver']}/"
+           f"?__frame_t={urllib.parse.quote(meta['assetToken'])}")
+    try:
+        body = http_get(url, {"User-Agent": UA, "Accept-Encoding": "gzip"})
+    except (urllib.error.HTTPError, urllib.error.URLError) as err:
+        die(f"Could not download artifact {uuid}: {err}")
+    html = FRAME_RUNTIME.sub("", body.decode("utf8", "replace"))
+    return meta.get("title") or uuid, re.sub(r'<base href="[^"]*">', "", html)
+
+
 # --- main ------------------------------------------------------------------
 
 def export_code(args):
@@ -339,37 +537,85 @@ def export_code(args):
 
 
 def export_desktop(args):
-    cookies = desktop_cookies()
-    key = session_key(cookies)
-    if not key:
-        die("No claude.ai session key found. Sign in to Claude Desktop, or set "
-            "CLAUDE_SESSION_KEY.")
-    org = org_uuid(cookies, key)
-    conversations = api(f"/organizations/{org}/chat_conversations?limit={args.limit}", key)
-    if not conversations:
-        die("No conversations found on claude.ai.")
-    conversations.sort(key=lambda c: c.get("updated_at") or "", reverse=True)
+    key, org = auth()
+    targets = desktop_pick(args, key, org)
+    if targets is None:
+        return None, None
+    full = desktop_full(targets[0], key, org)
+    return render_desktop(full, args.verbose), f"{slugify(full.get('name'))}-desktop"
+
+
+def download_code_artifacts(args):
+    key, org = auth()
+    records = code_artifacts()
+    if not records:
+        die(f"No published artifacts recorded in the Claude Code sessions under {PROJECTS_DIR}.")
 
     if args.pick:
-        entries = [f"{local_time(c.get('updated_at'))}  {(c.get('name') or 'Untitled')[:70]}"
-                   for c in conversations]
-        index = choose(entries, "Claude Desktop conversations")
+        entries = [f"{datetime.fromtimestamp(a['mtime']).strftime('%m-%d %H:%M')}  "
+                   f"{a['file']}  ({Path(a['project']).name})" for a in records[:args.limit]]
+        index = choose(entries, "Claude Code artifacts")
         if index is None:
             return None, None
-        target = conversations[index]
-    else:
-        window = front_window_title()
-        target = next((c for c in conversations
-                       if c.get("name") and window and c["name"] in window), conversations[0])
+        records = [records[index]]
+    elif not args.all:
+        records = records[:1]
 
-    full = api(f"/organizations/{org}/chat_conversations/{target['uuid']}"
-               "?tree=True&rendering_mode=messages&render_all_tools=true", key)
-    return render_desktop(full, args.verbose), f"{slugify(full.get('name'))}-desktop"
+    files = []
+    for record in records:
+        title, html = frame_download(record["uuid"], key, org)
+        files.append((safe_name(f"{slugify(title)}.html"), html))
+    name = Path(files[0][0]).stem if len(files) == 1 else "claude-code-artifacts"
+    return files, name
+
+
+def download_desktop_artifacts(args):
+    key, org = auth()
+    targets = desktop_pick(args, key, org)
+    if targets is None:
+        return None, None
+
+    files, title = [], None
+    for target in targets:
+        conv = desktop_full(target, key, org)
+        found = desktop_artifacts(conv)
+        if found and title is None:
+            title = conv.get("name")
+        files += found
+    if not files:
+        die("No artifacts there — Claude never created a file or artifact in that chat.")
+    return files, f"{slugify(title)}-artifacts"
+
+
+def download_url_artifact(args, uuid):
+    key, org = auth()
+    title, html = frame_download(uuid, key, org)
+    return [(safe_name(f"{slugify(title)}.html"), html)], slugify(title)
+
+
+def write_files(args, files, name):
+    """One artifact lands as a file, several land in a dated folder."""
+    args.out.mkdir(parents=True, exist_ok=True)
+    stamp = datetime.now().strftime("%Y-%m-%d")
+    if len(files) == 1:
+        target = unique(args.out / f"{stamp}-{files[0][0]}")
+        target.write_text(files[0][1], encoding="utf8")
+        return target
+    folder = unique(args.out / f"{stamp}-{name}")
+    folder.mkdir(parents=True)
+    for filename, content in files:
+        unique(folder / filename).write_text(content, encoding="utf8")
+    return folder
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("source", nargs="?", default="code", choices=["code", "desktop"])
+    parser.add_argument("source", nargs="?", default="code",
+                        help="code, desktop, or a claude.ai artifact URL")
+    parser.add_argument("-a", "--artifacts", action="store_true",
+                        help="download the artifacts as files instead of the conversation")
+    parser.add_argument("--all", action="store_true",
+                        help="with --artifacts: every artifact, not just the latest")
     parser.add_argument("-p", "--pick", action="store_true",
                         help="choose from a list instead of the most recent conversation")
     parser.add_argument("-v", "--verbose", action="store_true",
@@ -383,27 +629,46 @@ def main():
     parser.add_argument("--stdout", action="store_true", help="print instead of writing a file")
     args = parser.parse_args()
 
-    markdown, name = export_desktop(args) if args.source == "desktop" else export_code(args)
-    if markdown is None:
-        print("Cancelled.")
-        return
+    url = ARTIFACT_URL.search(args.source)
+    if not url and args.source not in ("code", "desktop"):
+        die("source must be 'code', 'desktop', or a claude.ai artifact URL.")
 
-    if args.stdout:
-        sys.stdout.write(markdown)
-        return
+    if url:
+        files, name = download_url_artifact(args, url[1])
+    elif args.artifacts:
+        files, name = (download_code_artifacts(args) if args.source == "code"
+                       else download_desktop_artifacts(args))
+    else:
+        markdown, name = export_desktop(args) if args.source == "desktop" else export_code(args)
 
-    args.out.mkdir(parents=True, exist_ok=True)
-    path = args.out / f"{datetime.now().strftime('%Y-%m-%d')}-{name}.md"
-    counter = 2
-    while path.exists():
-        path = args.out / f"{datetime.now().strftime('%Y-%m-%d')}-{name}-{counter}.md"
-        counter += 1
-    path.write_text(markdown, encoding="utf8")
+    if url or args.artifacts:
+        if files is None:
+            print("Cancelled.")
+            return
+        if args.stdout:
+            for filename, content in files:
+                if len(files) > 1:
+                    print(f"===== {filename} =====")
+                sys.stdout.write(content)
+            return
+        path = write_files(args, files, name)
+        summary = f"{len(files)} artifact{'s' if len(files) != 1 else ''}"
+    else:
+        if markdown is None:
+            print("Cancelled.")
+            return
+        if args.stdout:
+            sys.stdout.write(markdown)
+            return
+        args.out.mkdir(parents=True, exist_ok=True)
+        path = unique(args.out / f"{datetime.now().strftime('%Y-%m-%d')}-{name}.md")
+        path.write_text(markdown, encoding="utf8")
+        summary = f"{len(markdown.splitlines())} lines"
 
     subprocess.run(["pbcopy"], input=str(path), text=True)
     if args.reveal:
         subprocess.run(["open", "-R", str(path)])
-    print(f"Exported to {path} ({len(markdown.splitlines())} lines, path copied)")
+    print(f"Exported to {path} ({summary}, path copied)")
 
 
 if __name__ == "__main__":
