@@ -1,0 +1,80 @@
+// Zed tasks — replaces code-runner.executorMap and a few <leader> shell maps.
+//
+// Run with `task::Spawn` (alt-r / space r), re-run the last one with
+// `task::Rerun` (alt-shift-r). Zed also reads .vscode/tasks.json per project.
+//
+// Variables: $ZED_FILE $ZED_DIRNAME $ZED_STEM $ZED_WORKTREE_ROOT
+//            $ZED_ROW $ZED_COLUMN $ZED_SELECTED_TEXT
+[
+  {
+    "label": "run: python",
+    "command": "python3",
+    "args": ["-u", "$ZED_FILE"],
+    "reveal": "always",
+    "use_new_terminal": false
+  },
+  {
+    "label": "run: typescript (deno)",
+    "command": "deno",
+    "args": ["run", "-A", "$ZED_FILE"],
+    "reveal": "always"
+  },
+  {
+    "label": "run: c",
+    "command": "sh",
+    "args": [
+      "-c",
+      "gcc -pthread \"$ZED_FILE\" -o \"$ZED_STEM.out\" -Wall -Wextra -O3 -march=native && \"./$ZED_STEM.out\""
+    ],
+    "cwd": "$ZED_DIRNAME",
+    "reveal": "always"
+  },
+  {
+    "label": "run: c++",
+    "command": "sh",
+    "args": [
+      "-c",
+      "clang++ -std=c++17 -stdlib=libc++ \"$ZED_FILE\" -o \"$ZED_STEM.out\" -Wall -Wextra -O3 -march=native && \"./$ZED_STEM.out\""
+    ],
+    "cwd": "$ZED_DIRNAME",
+    "reveal": "always"
+  },
+  {
+    "label": "run: go",
+    "command": "go",
+    "args": ["run", "$ZED_FILE"],
+    "cwd": "$ZED_DIRNAME",
+    "reveal": "always"
+  },
+  {
+    "label": "run: rust",
+    "command": "sh",
+    "args": ["-c", "rustc \"$ZED_FILE\" -o \"$ZED_STEM\" && \"./$ZED_STEM\""],
+    "cwd": "$ZED_DIRNAME",
+    "reveal": "always"
+  },
+  {
+    "label": "run: java",
+    "command": "sh",
+    "args": ["-c", "javac \"$ZED_FILE\" && java \"$ZED_STEM\""],
+    "cwd": "$ZED_DIRNAME",
+    "reveal": "always"
+  },
+  {
+    // .vimrc: nnoremap <leader>x :!chmod +x %
+    "label": "chmod +x this file",
+    "command": "chmod",
+    "args": ["+x", "$ZED_FILE"],
+    "reveal": "on_error",
+    "show_summary": true
+  },
+  {
+    // .vimrc / nvim: <leader>gg → LazyGit
+    "label": "lazygit",
+    "command": "lazygit",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "reveal": "always",
+    "use_new_terminal": true,
+    "allow_concurrent_runs": false
+  }
+]

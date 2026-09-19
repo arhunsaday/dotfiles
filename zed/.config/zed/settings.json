@@ -1,0 +1,312 @@
+// Zed settings — ported from VSCode + .vimrc
+//
+// Docs: https://zed.dev/docs/configuring-zed
+// See every default with the `zed: open default settings` action.
+{
+  // ==========================================================================
+  // Appearance
+  // ==========================================================================
+  "theme": {
+    "mode": "system",
+    "light": "One Light",
+    "dark": "One Dark"
+  },
+  "icon_theme": "Material Icon Theme",
+  "buffer_font_family": "JetBrainsMono Nerd Font",
+  "buffer_font_fallbacks": ["JetBrains Mono", "Consolas", "monospace"],
+  "buffer_font_size": 14.0,
+  "buffer_line_height": "standard",
+  "ui_font_family": "JetBrainsMono Nerd Font",
+  "ui_font_size": 15.0,
+
+  "title_bar": {
+    "show_menus": false,
+    "show_branch_icon": false
+  },
+  "tabs": {
+    "show_close_button": "hidden",
+    "file_icons": true,
+    "git_status": false
+  },
+  "preview_tabs": {
+    "enabled": false
+  },
+  "status_bar": {
+    "active_language_button": false,
+    "cursor_position_button": false
+  },
+  "minimap": {
+    "show": "never",
+    "thumb": "always",
+    "max_width_columns": 100
+  },
+
+  // ==========================================================================
+  // Editor
+  // ==========================================================================
+  // .vimrc: set number + relativenumber + numbertoggle augroup
+  "relative_line_numbers": "enabled",
+  "gutter": {
+    "line_numbers": true,
+    // .vimrc: set nuw=2
+    "min_line_number_digits": 2,
+    // vim.showMarksInGutter
+    "bookmarks": true
+  },
+  // .vimrc: scrolloff=1 was too tight; VSCode used cursorSurroundingLines: 8
+  "vertical_scroll_margin": 8.0,
+  "horizontal_scroll_margin": 3,
+  "scroll_sensitivity": 2.0,
+  "cursor_blink": true,
+  "sticky_scroll": {
+    "enabled": true
+  },
+  "wrap_guides": [80, 120],
+  "soft_wrap": "none",
+  // .vimrc: softtabstop=2 / shiftwidth=2 / expandtab — Zed defaults to 4
+  "tab_size": 2,
+  "hard_tabs": false,
+  "auto_indent": true,
+  "auto_indent_on_paste": true,
+  "linked_edits": true,
+  "use_on_type_format": true,
+  "use_auto_surround": true,
+  "jsx_tag_auto_close": true,
+  "line_ending": "prefer_lf",
+  "format_on_save": "on",
+  "remove_trailing_whitespace_on_save": true,
+  "ensure_final_newline_on_save": true,
+  // editor.codeActionsOnSave: { "source.fixAll": "explicit" }
+  "code_actions_on_format": {},
+
+  // editor.parameterHints.enabled: false
+  "show_signature_help_after_edits": false,
+  "auto_signature_help": false,
+
+  // editor.inlayHints.enabled: "offUnlessPressed" — hold alt to reveal
+  "inlay_hints": {
+    "enabled": false,
+    "show_type_hints": true,
+    "show_parameter_hints": true,
+    "show_value_hints": true,
+    "show_other_hints": true,
+    "toggle_on_modifiers_press": {
+      "alt": true
+    }
+  },
+
+  // ErrorLens replacement
+  "diagnostics": {
+    "button": true,
+    "include_warnings": true,
+    "inline": {
+      "enabled": true,
+      "update_debounce_ms": 150,
+      "padding": 4,
+      "min_column": 0,
+      "max_severity": null
+    }
+  },
+
+  // .vimrc: nnoremap n nzzzv / N Nzzzv
+  "search": {
+    "center_on_match": true,
+    "case_sensitive": false,
+    "regex": false
+  },
+  "search_wrap": true,
+
+  // ==========================================================================
+  // Vim
+  // ==========================================================================
+  "vim_mode": true,
+  "base_keymap": "VSCode",
+  "vim": {
+    "default_mode": "normal",
+    // Absolute numbers in insert mode, relative elsewhere (numbertoggle)
+    "toggle_relative_line_numbers": true,
+    // .vimrc had clipboard=unnamedplus + d/c remapped to the black hole
+    // register so deletes would not clobber the clipboard. "on_yank" gets
+    // the same result natively: only y reaches the system clipboard.
+    "use_system_clipboard": "on_yank",
+    // .vimrc: set ignorecase + smartcase (applies to f/t/sneak too)
+    "use_smartcase_find": true,
+    "use_regex_search": true,
+    // .vimrc: highlight_yank augroup, timeout=200
+    "highlight_on_yank_duration": 200,
+    // .vimrc: t_SI / t_EI / t_SR escape sequences
+    "cursor_shape": {
+      "normal": "block",
+      "insert": "bar",
+      "replace": "underline",
+      "visual": "block"
+    },
+    "show_edit_predictions_in_normal_mode": false
+  },
+  // Discoverability for the space-leader tree below
+  "which_key": {
+    "enabled": true,
+    "delay_ms": 600
+  },
+
+  // ==========================================================================
+  // Panels & layout
+  // ==========================================================================
+  // VSCode had workbench.sideBar.location: "right"
+  "project_panel": {
+    "dock": "right",
+    "auto_reveal_entries": false
+  },
+  "outline_panel": {
+    "dock": "left"
+  },
+  "git_panel": {
+    "dock": "left"
+  },
+  "collaboration_panel": {
+    "dock": "left"
+  },
+  "agent": {
+    "button": true,
+    "enabled": true,
+    "dock": "right",
+    "favorite_models": [],
+    "model_parameters": []
+  },
+  "agent_servers": {
+    "claude-acp": {
+      "type": "registry"
+    }
+  },
+
+  // ==========================================================================
+  // Git
+  // ==========================================================================
+  "git": {
+    // gitlens.currentLine.enabled: false
+    "inline_blame": {
+      "enabled": false
+    }
+  },
+
+  // ==========================================================================
+  // Edit predictions
+  // ==========================================================================
+  "show_edit_predictions": true,
+  "edit_predictions": {
+    "provider": "zed",
+    "mode": "eager"
+  },
+
+  // ==========================================================================
+  // Terminal
+  // ==========================================================================
+  "terminal": {
+    "font_family": "JetBrainsMono Nerd Font",
+    "font_fallbacks": ["JetBrains Mono", "Consolas", "monospace"],
+    "font_size": 14.0,
+    "cursor_shape": "bar",
+    "blinking": "on",
+    "max_scroll_history_lines": 2500,
+    "env": {
+      "Q_NEW_SESSION": "\"1\"",
+      "FIG_NEW_SESSION": "\"1\"",
+      "CW_NEW_SESSION": "\"1\""
+    }
+  },
+
+  // ==========================================================================
+  // Languages
+  // ==========================================================================
+  "language_detection": true,
+  "file_types": {
+    "Markdown": ["*.rmd"],
+    "JavaScript": ["*.dbclient-js"],
+    "JSX": ["*.jsx"],
+    "JSONL": ["*.ndjson"],
+    "Prolog": ["*.pl"]
+  },
+  "languages": {
+    "Markdown": {
+      "soft_wrap": "editor_width",
+      // [markdown] editor.quickSuggestions: all off
+      "show_completions_on_input": false,
+      "format_on_save": "on"
+    },
+    "Go": {
+      // go.formatTool: goimports
+      "code_actions_on_format": {
+        "source.organizeImports": true
+      },
+      "tab_size": 4,
+      "hard_tabs": true
+    },
+    "TypeScript": {
+      "formatter": "prettier",
+      "code_actions_on_format": {
+        "source.fixAll.eslint": true
+      }
+    },
+    "TSX": {
+      "formatter": "prettier",
+      "code_actions_on_format": {
+        "source.fixAll.eslint": true
+      }
+    },
+    "JavaScript": {
+      "formatter": "prettier",
+      "code_actions_on_format": {
+        "source.fixAll.eslint": true
+      }
+    },
+    "JSON": {
+      "formatter": "prettier"
+    },
+    "JSONC": {
+      "formatter": "prettier"
+    },
+    "HTML": {
+      "formatter": "prettier"
+    },
+    "SCSS": {
+      "formatter": "prettier"
+    },
+    "Python": {
+      "format_on_save": "on",
+      "tab_size": 4
+    },
+    "C": {
+      "format_on_save": "on",
+      "tab_size": 4
+    },
+    "Terraform": {
+      "format_on_save": "on"
+    },
+    "YAML": {
+      "tab_size": 2
+    }
+  },
+
+  // ==========================================================================
+  // Misc
+  // ==========================================================================
+  "restore_on_startup": "last_session",
+  "file_scan_exclusions": [
+    "**/.git",
+    "**/.DS_Store",
+    "**/.svn",
+    "**/.hg",
+    "**/CVS",
+    "**/node_modules",
+    "**/.codex",
+    "**/.cursor",
+    "**/.specify",
+    "**/.windsurf",
+    "**/CODEX.md",
+    "**/GEMINI.md"
+  ],
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false
+  }
+}

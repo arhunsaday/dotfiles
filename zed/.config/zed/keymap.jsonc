@@ -1,0 +1,320 @@
+// Zed keymap — ported from VSCode keybindings.json + .vimrc
+//
+// Docs: https://zed.dev/docs/key-bindings
+// See every default with the `zed: open default keymap` action.
+//
+// Contexts used below:
+//   Workspace                — always
+//   Editor                   — an editor has focus
+//   VimControl && !menu      — vim normal/visual/operator, no popup open
+//   vim_mode == insert       — insert mode
+//   ProjectPanel             — file tree
+//   Terminal                 — integrated terminal
+[
+  // ==========================================================================
+  // Workspace: panels & docks   (alt+<letter>, as in VSCode)
+  // ==========================================================================
+  {
+    "context": "Workspace",
+    "bindings": {
+      // alt+n  workbench.view.explorer
+      "alt-n": "project_panel::ToggleFocus",
+      // alt+o  outline.focus
+      "alt-o": "outline_panel::ToggleFocus",
+      // alt+g / ctrl+g  workbench.view.scm
+      "alt-g": "git_panel::ToggleFocus",
+      "ctrl-g": "git_panel::ToggleFocus",
+      // alt+d  workbench.view.debug
+      "alt-d": "debug_panel::ToggleFocus",
+      // alt+c  chat view
+      "alt-c": "agent::ToggleFocus",
+      // alt+x  workbench.view.extensions
+      "alt-x": "zed::Extensions",
+      // alt+b / alt+s  toggleSidebarVisibility / toggleAuxiliaryBar
+      "alt-b": "workspace::ToggleRightDock",
+      "alt-s": "workspace::ToggleLeftDock",
+      // alt+z  toggleZenMode  (nearest equivalent)
+      "alt-z": "workspace::ToggleCenteredLayout",
+      // alt+e  quickOpen  /  showAllEditors
+      "alt-e": "file_finder::Toggle",
+      "alt-shift-e": "tab_switcher::Toggle",
+      // alt+p  command palette
+      "alt-p": "command_palette::Toggle",
+      // alt+f  findInFiles
+      "alt-f": "pane::DeploySearch",
+      // alt+t  newUntitledFile
+      "alt-t": "workspace::NewFile",
+      // alt+r  code-runner.run
+      "alt-r": "task::Spawn",
+      "alt-shift-r": "task::Rerun",
+      // cmd+t / cmd+j  toggleTerminal
+      "cmd-t": "terminal_panel::Toggle",
+      "cmd-j": "terminal_panel::Toggle",
+      "ctrl-t": "terminal_panel::Toggle",
+      // alt+1..9  openEditorAtIndexN
+      "alt-1": ["pane::ActivateItem", 0],
+      "alt-2": ["pane::ActivateItem", 1],
+      "alt-3": ["pane::ActivateItem", 2],
+      "alt-4": ["pane::ActivateItem", 3],
+      "alt-5": ["pane::ActivateItem", 4],
+      "alt-6": ["pane::ActivateItem", 5],
+      "alt-7": ["pane::ActivateItem", 6],
+      "alt-8": ["pane::ActivateItem", 7],
+      "alt-9": "pane::ActivateLastItem",
+      // cmd+shift+enter  splitEditor
+      "cmd-shift-enter": "pane::SplitRight",
+      // ctrl+h/j/k/l  focus<Direction>Group
+      "ctrl-h": "workspace::ActivatePaneLeft",
+      "ctrl-j": "workspace::ActivatePaneDown",
+      "ctrl-k": "workspace::ActivatePaneUp",
+      "ctrl-l": "workspace::ActivatePaneRight",
+    },
+  },
+  {
+    "context": "Workspace",
+    "unbind": {
+      "ctrl-`": "terminal_panel::Toggle",
+    },
+  },
+  // ==========================================================================
+  // Pane / tab management
+  // ==========================================================================
+  {
+    "context": "Pane",
+    "bindings": {
+      // cmd+shift+h / cmd+shift+l  previous/nextEditor
+      "cmd-shift-h": "pane::ActivatePreviousItem",
+      "cmd-shift-l": "pane::ActivateNextItem",
+      // alt+h / alt+l — .vimrc bprevious / bnext
+      "alt-h": "pane::ActivatePreviousItem",
+      "alt-l": "pane::ActivateNextItem",
+      // alt+w / cmd+shift+w  closeActiveEditor
+      "alt-w": "pane::CloseActiveItem",
+      "cmd-shift-w": "pane::CloseActiveItem",
+      // alt+q  closeAllEditors
+      "alt-q": "pane::CloseAllItems",
+      // alt+left / alt+right  moveEditor<Dir>InGroup
+      "alt-left": "pane::SwapItemLeft",
+      "alt-right": "pane::SwapItemRight",
+      // cmd+f  startFindReplaceAction (find *with* replace, as in VSCode)
+      "cmd-f": "buffer_search::DeployReplace",
+      // cmd+shift+f / cmd+g  replaceInFiles / quickTextSearch
+      "cmd-shift-f": "pane::DeploySearch",
+      "cmd-g": "pane::DeploySearch",
+    },
+  },
+  // ==========================================================================
+  // Editor
+  // ==========================================================================
+  {
+    "context": "Editor",
+    "bindings": {
+      // alt+j / alt+k — .vimrc :m .+1 / :m .-2
+      "alt-j": "editor::MoveLineDown",
+      "alt-k": "editor::MoveLineUp",
+      // alt+[ / alt+]  fold / unfold
+      "alt-[": "editor::Fold",
+      "alt-]": "editor::UnfoldLines",
+      "alt-shift-[": "editor::FoldAll",
+      "alt-shift-]": "editor::UnfoldAll",
+      // shift+enter  insertLineBefore
+      "shift-enter": "editor::NewlineAbove",
+      // alt+m  toggleMinimap
+      "alt-m": "editor::ToggleMinimap",
+      // alt+enter  settings.cycle.errorLens
+      "alt-enter": "editor::ToggleInlineDiagnostics",
+      // ctrl+enter  toggle copilot completions
+      "ctrl-enter": "editor::ToggleEditPrediction",
+      // alt+space  triggerSuggest
+      "alt-space": "editor::ShowCompletions",
+      // alt+i  source.addMissingImports (nearest: organize imports)
+      "alt-i": "editor::OrganizeImports",
+      // alt+d  editor.action.changeAll
+      "alt-d": "editor::SelectAllMatches",
+      // ctrl+e / alt+l / alt+a  accept inline suggestion
+      "ctrl-e": "editor::AcceptEditPrediction",
+      "alt-a": "editor::AcceptEditPrediction",
+      "ctrl-]": "editor::NextEditPrediction",
+      // f2  rename
+      "f2": "editor::Rename",
+    },
+  },
+  // ==========================================================================
+  // Vim: insert mode
+  // ==========================================================================
+  {
+    "context": "vim_mode == insert",
+    "bindings": {
+      // .vimrc: inoremap jk <Esc>
+      "j k": "vim::NormalBefore",
+    },
+  },
+  // ==========================================================================
+  // Vim: .vimrc quality-of-life remaps
+  // ==========================================================================
+  {
+    "context": "VimControl && !menu",
+    "bindings": {
+      // .vimrc: nnoremap ; :  →  Zed's ":" is the command palette
+      ";": "command_palette::Toggle",
+      // .vimrc: nnoremap Y y$
+      "shift-y": ["workspace::SendKeystrokes", "y $"],
+      // .vimrc: x is the cut operator (Zed's default x is delete-char),
+      // X deletes to end of line. Use "dl" to delete a single character.
+      //
+      // The matching .vimrc half — d/c/D/C routed to the black hole register —
+      // is NOT ported: the only way to express it here is SendKeystrokes
+      // '" _ d', whose trailing d re-enters this same binding and recurses.
+      // "vim": { "use_system_clipboard": "on_yank" } in settings.json solves
+      // the actual problem instead (deletes no longer clobber the clipboard);
+      // reach for "_d explicitly when you also want the unnamed register kept.
+      "x": "vim::PushDelete",
+      "shift-x": "vim::DeleteToEndOfLine",
+      // vim.sneak: true — 2-char motion (respects use_smartcase_find)
+      "s": "vim::PushSneak",
+      "shift-s": "vim::PushSneakBackward",
+      // VSCode: "g a" → editor.action.quickFix
+      // (overrides Zed's default g a = SelectAllMatches, kept on alt-d above)
+      "g a": "editor::ToggleCodeActions",
+      // .vimrc: nnoremap <leader>l :nohlsearch  (moved off the "l" LSP prefix)
+      "space h": "buffer_search::Dismiss",
+    },
+  },
+  // ==========================================================================
+  // Vim: <space> leader tree  (mirrors vim.normalModeKeyBindings)
+  // ==========================================================================
+  {
+    "context": "VimControl && !menu",
+    "bindings": {
+      // --- top level --------------------------------------------------------
+      "space e": "file_finder::Toggle",
+      "space n": "project_panel::ToggleFocus",
+      "space o": "outline::Toggle",
+      "space b": "editor::ToggleBookmark",
+      "space shift-b": "editor::ToggleBookmarkWithLabel",
+      "space r": "task::Spawn",
+      "space j": "vim::PushSneak",
+      "space %": "editor::MoveToEnclosingBracket",
+      // --- l: LSP -----------------------------------------------------------
+      "space l f": "editor::Format",
+      "space l w": "workspace::FormatAndSave",
+      "space l r": "editor::Rename",
+      "space l d": "editor::Rename",
+      "space l a": "editor::ToggleCodeActions",
+      "space l o": "editor::OrganizeImports",
+      "space l j": "editor::GoToDiagnostic",
+      "space l k": "editor::GoToPreviousDiagnostic",
+      "space l h": "editor::Hover",
+      "space l s": "project_symbols::Toggle",
+      // --- f: find ----------------------------------------------------------
+      "space f m": "editor::Format",
+      "space f f": "file_finder::Toggle",
+      "space f w": "pane::DeploySearch",
+      "space f e": "pane::DeploySearch",
+      "space f s": "project_symbols::Toggle",
+      "space f o": "projects::OpenRecent",
+      "space f b": "editor::ViewBookmarks",
+      // --- g: git -----------------------------------------------------------
+      "space g g": "git_panel::ToggleFocus",
+      "space g d": "git::Diff",
+      "space g c": "git::Commit",
+      "space g b": "git::Branch",
+      "space g l": "editor::ToggleGitBlameInline",
+      "space g s": "git::StageAndNext",
+      "space g u": "git::UnstageAndNext",
+      "space g r": "git::Restore",
+      "space g j": "editor::GoToHunk",
+      "space g k": "editor::GoToPreviousHunk",
+      "space g p": "git::Push",
+      "space g f": "git::Fetch",
+      // --- t: tests / tasks -------------------------------------------------
+      "space t t": "task::Spawn",
+      "space t a": "task::Rerun",
+      "space t f": "task::Spawn",
+      // --- d: debug ---------------------------------------------------------
+      "space d d": "editor::ToggleBreakpoint",
+      "space d s": "debugger::Start",
+      "space d c": "debugger::Continue",
+      "space d o": "debugger::StepOver",
+      "space d i": "debugger::StepInto",
+      "space d u": "debugger::StepOut",
+      "space d x": "debugger::Stop",
+      "space d p": "debug_panel::ToggleFocus",
+      // --- v: view toggles  (was settings-cycler) ---------------------------
+      "space v e": "editor::ToggleInlineDiagnostics",
+      "space v i": "editor::ToggleInlayHints",
+      "space v c": "editor::ToggleEditPrediction",
+      "space v m": "workspace::ToggleCenteredLayout",
+      "space v z": "workspace::ToggleCenteredLayout",
+      "space v w": "editor::ToggleSoftWrap",
+      "space v n": "editor::ToggleMinimap",
+      "space v v": "editor::ToggleInlineValues",
+      "space v b": "editor::ToggleGitBlame",
+      // --- n: notebook / REPL ----------------------------------------------
+      "space n r": "repl::Run",
+      "space n c": "repl::ClearOutputs",
+      "space n s": "repl::Sessions",
+    },
+  },
+  // ==========================================================================
+  // Project panel: vim-style file operations (from VSCode explorer bindings)
+  // ==========================================================================
+  {
+    "context": "ProjectPanel && not_editing",
+    "bindings": {
+      "j": "menu::SelectNext",
+      "k": "menu::SelectPrevious",
+      "h": "project_panel::CollapseSelectedEntry",
+      "l": "project_panel::ExpandSelectedEntry",
+      "r": "project_panel::Rename",
+      "d": "project_panel::Trash",
+      "shift-d": "project_panel::Delete",
+      "y": "project_panel::Copy",
+      "x": "project_panel::Cut",
+      "p": "project_panel::Paste",
+      "a": "project_panel::NewFile",
+      "n": "project_panel::NewFile",
+      "shift-a": "project_panel::NewDirectory",
+      "shift-n": "project_panel::NewDirectory",
+      "v": "project_panel::OpenSplitVertical",
+      "alt-[": "project_panel::CollapseAllEntries",
+      "escape": "workspace::ToggleRightDock",
+    },
+  },
+  // ==========================================================================
+  // Terminal
+  // ==========================================================================
+  {
+    "context": "Terminal",
+    "bindings": {
+      "cmd-t": "terminal_panel::Toggle",
+      "cmd-j": "terminal_panel::Toggle",
+      "alt-w": "pane::CloseActiveItem",
+      "cmd-shift-w": "pane::CloseActiveItem",
+      "cmd-shift-h": "pane::ActivatePreviousItem",
+      "cmd-shift-l": "pane::ActivateNextItem",
+      "ctrl-m": "workspace::ToggleZoom",
+    },
+  },
+  // ==========================================================================
+  // Popups / menus: ctrl+j / ctrl+k everywhere  (VSCode + telescope habit)
+  // ==========================================================================
+  {
+    "context": "menu",
+    "bindings": {
+      "ctrl-j": "menu::SelectNext",
+      "ctrl-k": "menu::SelectPrevious",
+      "cmd-j": "menu::SelectNext",
+      "cmd-k": "menu::SelectPrevious",
+    },
+  },
+  {
+    "context": "Editor && showing_completions",
+    "bindings": {
+      "ctrl-j": "editor::ContextMenuNext",
+      "ctrl-k": "editor::ContextMenuPrevious",
+      "tab": "editor::ContextMenuNext",
+      "shift-tab": "editor::ContextMenuPrevious",
+    },
+  },
+]
