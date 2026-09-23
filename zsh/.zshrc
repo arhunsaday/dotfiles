@@ -1,7 +1,7 @@
 source $HOME/.config/zsh/main.zsh
 source $HOME/.config/zsh/functions.zsh
 source $HOME/.config/zsh/aliases.zsh
-source $HOME/.config/zsh/claude-shell.zsh
+source $HOME/.config/zsh/ai-shell.zsh
 
 # Asdf
 # . /opt/homebrew/opt/asdf/libexec/asdf.sh
@@ -26,3 +26,5 @@ export JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home
 ### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
 export PATH="/Users/goblingarry/.rd/bin:$PATH"
 ### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
+
+# ArgoCD, Scaleway, API keys... all live in ~/.config/secrets.env — `secrets edit`

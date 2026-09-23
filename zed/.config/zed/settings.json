@@ -9,7 +9,7 @@
   "theme": {
     "mode": "system",
     "light": "One Light",
-    "dark": "One Dark"
+    "dark": "VSCode Dark Modern"
   },
   "icon_theme": "Material Icon Theme",
   "buffer_font_family": "JetBrainsMono Nerd Font",

@@ -43,3 +43,21 @@ export VSCODE_PROFILES=("Frontend/angular" "Default" "Backend/devops" "Minimal")
 
 # Path
 export PATH=/var/lib/flatpak/exports/bin:$HOME/.cargo/bin:$HOME/.deno/bin:$HOME/.local:$HOME/.local/bin:$HOME/.local/scripts:$HOME/.local/share/pop-launcher/scripts:$PNPM_HOME:$GOPATH/bin:$GOROOT/bin:$PATH:$TEXPATH
+
+# ==============================================================================
+# Secrets
+# ==============================================================================
+# Every API key and token lives in one file that is NOT part of this repo, so
+# nothing secret can be committed by accident. Template: secrets.env.example.
+# Manage it with `secrets` (see functions.zsh); inspect it with `secrets list`.
+#
+# Loaded from .zshenv rather than .zshrc so scripts and non-interactive shells
+# get the keys too — a cron job or an editor plugin has no interactive shell.
+export SECRETS_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/secrets.env"
+if [[ -r $SECRETS_FILE ]]; then
+  # a readable-by-anyone key file is worse than no key file
+  _secrets_perm=$(stat -f '%OLp' "$SECRETS_FILE" 2>/dev/null || stat -c '%a' "$SECRETS_FILE" 2>/dev/null)
+  [[ $_secrets_perm == 600 ]] || print -u2 "secrets: $SECRETS_FILE is mode ${_secrets_perm:-?} — run: chmod 600 \$SECRETS_FILE"
+  unset _secrets_perm
+  source "$SECRETS_FILE"
+fi

@@ -111,6 +111,12 @@ usage() {
     platform, and ~work / ~perso only for the chosen environment. The choice is
     remembered in $(tilde "$ENV_FILE"), so later runs can omit it.
 
+  ${BOLD}Secrets${RESET}
+    Every API key and token lives in one file outside this repo,
+    $(tilde "${XDG_CONFIG_HOME:-$HOME/.config}/secrets.env"), created from
+    secrets.env.example on install if it is missing. Edit it with \`secrets edit\`.
+    Uninstall never deletes it.
+
   ${BOLD}Options${RESET}
     --dry-run, -n   show what would change, write nothing
     --verbose, -v   print every link stow makes
@@ -251,6 +257,51 @@ unstow_other_environments() {
     done
 }
 
+# --------------------------------------------------------------- secrets ----
+
+SECRETS_FILE_PATH="${XDG_CONFIG_HOME:-$HOME/.config}/secrets.env"
+
+# The one file holding every API key. It lives outside this repo on purpose, so
+# stow cannot create it — do that here, and always say where it stands.
+setup_secrets() {
+    local file="$SECRETS_FILE_PATH"
+    local template="$DOTFILES_DIR/secrets.env.example"
+    local vars perm
+
+    section "secrets"
+
+    if [[ -f "$file" ]]; then
+        vars=$(grep -cE '^[[:space:]]*export[[:space:]]+[A-Za-z_]' "$file" 2>/dev/null)
+        perm=$(stat -f '%OLp' "$file" 2>/dev/null || stat -c '%a' "$file" 2>/dev/null)
+        if [[ "$perm" != "600" ]]; then
+            $DRY_RUN || chmod 600 "$file"
+            report "$YELLOW" "!" "secrets.env" "$(plural "${vars:-0}" var) · mode $perm → 600"
+        else
+            report "$DIM" "·" "secrets.env" "$(plural "${vars:-0}" var) · $(tilde "$file")"
+        fi
+        return 0
+    fi
+
+    if [[ ! -f "$template" ]]; then
+        FAILED=$((FAILED + 1))
+        report "$RED" "✖" "secrets.env" "missing, and no secrets.env.example to copy from"
+        return 1
+    fi
+
+    if $DRY_RUN; then
+        report "$YELLOW" "◌" "secrets.env" "would create $(tilde "$file") from the template"
+        return 0
+    fi
+
+    mkdir -p "$(dirname "$file")"
+    (umask 077; cp "$template" "$file") && chmod 600 "$file" || {
+        FAILED=$((FAILED + 1))
+        report "$RED" "✖" "secrets.env" "could not write $(tilde "$file")"
+        return 1
+    }
+    report "$GREEN" "✔" "secrets.env" "created at $(tilde "$file") — empty, fill it with 'secrets edit'"
+}
+
 # ------------------------------------------------------------------ main ----
 
 setup_colors
@@ -303,6 +354,8 @@ if [[ "$ACTION" == "install" ]]; then
         stow_package "$package" "$kind" "-R" "$conflicts"
     done
 
+    setup_secrets
+
     $DRY_RUN || echo "$ENVIRONMENT" > "$ENV_FILE"
 else
     for dir in */; do
@@ -314,6 +367,13 @@ else
     done
 
     unstow_other_environments "$ENVIRONMENT"
+
+    # never delete real credentials on the way out, but do not leave them unmentioned
+    if [[ -f "$SECRETS_FILE_PATH" ]]; then
+        section "secrets"
+        report "$DIM" "·" "secrets.env" "kept — $(tilde "$SECRETS_FILE_PATH")"
+    fi
+
     $DRY_RUN || rm -f "$ENV_FILE"
 fi
 

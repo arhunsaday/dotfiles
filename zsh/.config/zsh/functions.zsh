@@ -167,3 +167,37 @@ function watch_dir() {
 
     fswatch -o "$dir_to_watch" | xargs -n1 -I{} bash -c 'clear; '"$command_to_run"
 }
+# Manage the single secrets file ($SECRETS_FILE, see exports.zsh)
+secrets() {
+  local file=${SECRETS_FILE:-${XDG_CONFIG_HOME:-$HOME/.config}/secrets.env}
+  case ${1:-edit} in
+    edit|e)
+      [[ -e $file ]] || { mkdir -p "${file:h}" && install -m 600 /dev/null "$file" }
+      ${EDITOR:-vi} "$file" && secrets reload
+      ;;
+    reload|r)
+      [[ -r $file ]] || { echo "secrets: no $file" >&2; return 1 }
+      source "$file" && echo "secrets: reloaded $(sed -nE 's/^[[:space:]]*export[[:space:]]+([A-Za-z_][A-Za-z0-9_]*)=.*/\1/p' "$file" | wc -l | tr -d ' ') vars from $file"
+      ;;
+    list|ls|l)
+      # names only — printing values into scrollback defeats the point
+      [[ -r $file ]] || { echo "secrets: no $file" >&2; return 1 }
+      sed -nE 's/^[[:space:]]*export[[:space:]]+([A-Za-z_][A-Za-z0-9_]*)=.*/  \1/p' "$file"
+      ;;
+    path|p)  echo "$file" ;;
+    *)
+      cat >&2 <<USAGE
+
+  secrets — the one file holding every API key and token
+
+    secrets edit     open it in \$EDITOR, then reload this shell
+    secrets reload   re-source it after an external edit
+    secrets list     variable names only, never values
+    secrets path     print the file path
+
+  Lives at $file, mode 0600, outside the dotfiles repo.
+
+USAGE
+      return 1 ;;
+  esac
+}

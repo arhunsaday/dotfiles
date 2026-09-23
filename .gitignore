@@ -25,3 +25,9 @@ node_modules
 
 # Track this repo's Claude Code memory (overrides global **/Claude.md ignore)
 !**/CLAUDE.md
+
+# Secrets live in ~/.config/secrets.env, never in this repo (see secrets.env.example)
+secrets.env
+*.secrets.env
+.env
+.envrc
