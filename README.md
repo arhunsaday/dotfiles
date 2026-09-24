@@ -45,23 +45,23 @@ secrets path     # print the file path
 
 `zsh/.config/zsh/ai-shell.zsh` turns plain English into shell commands.
 
-| | |
-|---|---|
-| `Ctrl-G` | rewrite the current command line in place |
-| `ai <request>` | put a suggested command on the next prompt |
-| `fix [cmd]` | correct the last (or given) command |
-| `wtf` | explain why the last command failed, and offer a fix |
-| `ai --status` | show the backend, model and keys in use |
+|                |                                                      |
+| -------------- | ---------------------------------------------------- |
+| `Ctrl-G`       | rewrite the current command line in place            |
+| `ai <request>` | put a suggested command on the next prompt           |
+| `fix [cmd]`    | correct the last (or given) command                  |
+| `wtf`          | explain why the last command failed, and offer a fix |
+| `ai --status`  | show the backend, model and keys in use              |
 
-It talks to OpenAI, Anthropic, or the `claude` CLI. With `AI_PROVIDER=auto` (the
-default) the first usable one wins: `OPENAI_API_KEY`, then `ANTHROPIC_API_KEY`
+It talks to OpenAI, Anthropic, or the `claude` CLI. With `DOT_AI_PROVIDER=auto` (the
+default) the first usable one wins: `DOT_OPENAI_API_KEY`, then `DOT_ANTHROPIC_API_KEY`
 (both need `curl` + `jq`), then the CLI — which needs no key but has a ~3s
 cold-start floor. Put the keys in `~/.config/secrets.env`; the models and the
 other knobs are documented at the top of the file.
 
 ```sh
-export OPENAI_API_KEY=sk-proj-...
-export AI_OPENAI_MODEL=gpt-6-luna    # default; gpt-6-sol for harder work
+export DOT_OPENAI_API_KEY=sk-proj-...
+export DOT_AI_OPENAI_MODEL=gpt-6-luna    # default; gpt-6-sol for harder work
 ```
 
 `OPENAI_BASE_URL` points anywhere OpenAI-compatible — OpenRouter, Ollama, a

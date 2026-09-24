@@ -13,19 +13,19 @@
 #                    the command to capture its output, unless it looks like it
 #                    changes something — see `wtf --help`.
 #
-# Backends. With AI_PROVIDER=auto (the default) the first usable one wins:
-#   openai       OPENAI_API_KEY    + curl + jq    sub-second
-#   anthropic    ANTHROPIC_API_KEY + curl + jq    sub-second
+# Backends. With DOT_AI_PROVIDER=auto (the default) the first usable one wins:
+#   openai       DOT_OPENAI_API_KEY    + curl + jq    sub-second
+#   anthropic    DOT_ANTHROPIC_API_KEY + curl + jq    sub-second
 #   claude-cli   the `claude` CLI, no key needed  ~3s floor (Node boot + auth)
-# Pin one with AI_PROVIDER=openai|anthropic|claude-cli.
+# Pin one with DOT_AI_PROVIDER=openai|anthropic|claude-cli.
 #
 # Config. Keys belong in ~/.config/secrets.env (`secrets edit`); the rest can go
 # anywhere sourced before this file.
-#   AI_PROVIDER          auto | openai | anthropic | claude-cli  (default: auto)
-#   AI_OPENAI_MODEL      OpenAI model id      (default: gpt-6-luna)
+#   DOT_AI_PROVIDER          auto | openai | anthropic | claude-cli  (default: auto)
+#   DOT_AI_OPENAI_MODEL      OpenAI model id      (default: gpt-6-luna)
 #   AI_ANTHROPIC_MODEL   Anthropic model id   (default: claude-haiku-4-5-20251001)
 #   AI_CLI_MODEL         claude CLI alias     (default: haiku)
-#   AI_REASONING_EFFORT  OpenAI reasoning effort: none|low|medium|high|xhigh|max,
+#   DOT_AI_REASONING_EFFORT  OpenAI reasoning effort: none|low|medium|high|xhigh|max,
 #                        or '' to omit the field entirely for endpoints that
 #                        reject it (default: none — these are one-liners, not
 #                        puzzles. `wtf` diagnoses better at low.)
@@ -36,11 +36,11 @@
 #   ANTHROPIC_BASE_URL   (default: https://api.anthropic.com)
 #   NO_COLOR             set to disable all styling
 
-: ${AI_PROVIDER:=auto}
-: ${AI_OPENAI_MODEL:=gpt-6-luna}
+: ${DOT_AI_PROVIDER:=auto}
+: ${DOT_AI_OPENAI_MODEL:=gpt-6-luna}
 : ${AI_ANTHROPIC_MODEL:=claude-haiku-4-5-20251001}
 : ${AI_CLI_MODEL:=haiku}
-: ${AI_REASONING_EFFORT:=none}
+: ${DOT_AI_REASONING_EFFORT:=none}
 : ${AI_MAX_TOKENS:=1024}
 : ${AI_TIMEOUT:=45}
 
@@ -160,10 +160,10 @@ _ai_has_http() { command -v curl >/dev/null 2>&1 && command -v jq >/dev/null 2>&
 
 # Which backend this invocation will actually use (empty if none can run).
 _ai_provider() {
-  local p=$AI_PROVIDER
+  local p=$DOT_AI_PROVIDER
   if [[ $p == auto ]]; then
-    if   [[ -n $OPENAI_API_KEY    ]] && _ai_has_http; then p=openai
-    elif [[ -n $ANTHROPIC_API_KEY ]] && _ai_has_http; then p=anthropic
+    if   [[ -n $DOT_OPENAI_API_KEY    ]] && _ai_has_http; then p=openai
+    elif [[ -n $DOT_ANTHROPIC_API_KEY ]] && _ai_has_http; then p=anthropic
     elif command -v claude >/dev/null 2>&1;            then p=claude-cli
     else p=''
     fi
@@ -200,7 +200,7 @@ _ai_take() {
     # a reasoning model can burn the whole budget before emitting a single token
     case $stop in
       length|max_tokens|max_output_tokens)
-        _ai_err "hit the token cap before answering — raise AI_MAX_TOKENS (now $AI_MAX_TOKENS) or lower AI_REASONING_EFFORT" ;;
+        _ai_err "hit the token cap before answering — raise AI_MAX_TOKENS (now $AI_MAX_TOKENS) or lower DOT_AI_REASONING_EFFORT" ;;
     esac
     return 1
   fi
@@ -208,26 +208,26 @@ _ai_take() {
 }
 
 _ai_gen_openai() {
-  [[ -n $OPENAI_API_KEY ]] || { _ai_err "OPENAI_API_KEY is not set — try: secrets edit"; return 1 }
+  [[ -n $DOT_OPENAI_API_KEY ]] || { _ai_err "DOT_OPENAI_API_KEY is not set — try: secrets edit"; return 1 }
   local base=${OPENAI_BASE_URL:-https://api.openai.com/v1} payload body
-  payload=$(jq -n --arg m "$AI_OPENAI_MODEL" --arg sys "$2" --arg u "$1" \
-                  --argjson mt "$AI_MAX_TOKENS" --arg eff "$AI_REASONING_EFFORT" \
+  payload=$(jq -n --arg m "$DOT_AI_OPENAI_MODEL" --arg sys "$2" --arg u "$1" \
+                  --argjson mt "$AI_MAX_TOKENS" --arg eff "$DOT_AI_REASONING_EFFORT" \
     '{model:$m, max_completion_tokens:$mt,
       messages:[{role:"system",content:$sys},{role:"user",content:$u}]}
      + (if $eff == "" then {} else {reasoning_effort:$eff} end)')
   body=$(_ai_post "${base%/}/chat/completions" "$payload" \
-           -H "authorization: Bearer $OPENAI_API_KEY") || return 1
+           -H "authorization: Bearer $DOT_OPENAI_API_KEY") || return 1
   _ai_take "$body" '.choices[0].message.content // ""' '.choices[0].finish_reason // ""'
 }
 
 _ai_gen_anthropic() {
-  [[ -n $ANTHROPIC_API_KEY ]] || { _ai_err "ANTHROPIC_API_KEY is not set — try: secrets edit"; return 1 }
+  [[ -n $DOT_ANTHROPIC_API_KEY ]] || { _ai_err "DOT_ANTHROPIC_API_KEY is not set — try: secrets edit"; return 1 }
   local base=${ANTHROPIC_BASE_URL:-https://api.anthropic.com} payload body
   payload=$(jq -n --arg m "$AI_ANTHROPIC_MODEL" --arg sys "$2" --arg u "$1" \
                   --argjson mt "$AI_MAX_TOKENS" \
     '{model:$m, max_tokens:$mt, system:$sys, messages:[{role:"user",content:$u}]}')
   body=$(_ai_post "${base%/}/v1/messages" "$payload" \
-           -H "x-api-key: $ANTHROPIC_API_KEY" -H 'anthropic-version: 2023-06-01') || return 1
+           -H "x-api-key: $DOT_ANTHROPIC_API_KEY" -H 'anthropic-version: 2023-06-01') || return 1
   _ai_take "$body" '[.content[]? | select(.type=="text") | .text] | join("")' '.stop_reason // ""'
 }
 
@@ -262,10 +262,10 @@ _ai_gen() {
     anthropic)  _ai_gen_anthropic "$req" "$sys" ;;
     claude-cli) _ai_gen_cli       "$req" "$sys" ;;
     *)
-      if [[ $AI_PROVIDER != auto ]]; then
-        _ai_err "unknown AI_PROVIDER: $AI_PROVIDER (auto|openai|anthropic|claude-cli)"
+      if [[ $DOT_AI_PROVIDER != auto ]]; then
+        _ai_err "unknown DOT_AI_PROVIDER: $DOT_AI_PROVIDER (auto|openai|anthropic|claude-cli)"
       else
-        _ai_err "no backend — set OPENAI_API_KEY or ANTHROPIC_API_KEY (needs curl+jq), or install the 'claude' CLI"
+        _ai_err "no backend — set DOT_OPENAI_API_KEY or DOT_ANTHROPIC_API_KEY (needs curl+jq), or install the 'claude' CLI"
       fi
       return 1 ;;
   esac
@@ -363,19 +363,19 @@ _ai_status() {
   local p model endpoint keys=()
   p=$(_ai_provider)
   case $p in
-    openai)     model=$AI_OPENAI_MODEL;    endpoint=${OPENAI_BASE_URL:-https://api.openai.com/v1} ;;
+    openai)     model=$DOT_AI_OPENAI_MODEL;    endpoint=${OPENAI_BASE_URL:-https://api.openai.com/v1} ;;
     anthropic)  model=$AI_ANTHROPIC_MODEL; endpoint=${ANTHROPIC_BASE_URL:-https://api.anthropic.com} ;;
     claude-cli) model=$AI_CLI_MODEL;       endpoint='claude CLI (no key needed)' ;;
     *)          model='—';                 endpoint='—' ;;
   esac
 
-  [[ -n $OPENAI_API_KEY ]]    && keys+=("OPENAI_API_KEY ✔")    || keys+=("OPENAI_API_KEY ✖")
-  [[ -n $ANTHROPIC_API_KEY ]] && keys+=("ANTHROPIC_API_KEY ✔") || keys+=("ANTHROPIC_API_KEY ✖")
+  [[ -n $DOT_OPENAI_API_KEY ]]    && keys+=("DOT_OPENAI_API_KEY ✔")    || keys+=("DOT_OPENAI_API_KEY ✖")
+  [[ -n $DOT_ANTHROPIC_API_KEY ]] && keys+=("DOT_ANTHROPIC_API_KEY ✔") || keys+=("DOT_ANTHROPIC_API_KEY ✖")
   command -v claude >/dev/null 2>&1 && keys+=("claude CLI ✔") || keys+=("claude CLI ✖")
   _ai_has_http || keys+=("curl/jq missing")
 
   printf '\n'
-  _ai_field "using" "$_AI_BOLD" "${p:-nothing usable}  ${_AI_DIM}(AI_PROVIDER=$AI_PROVIDER)${_AI_OFF}"
+  _ai_field "using" "$_AI_BOLD" "${p:-nothing usable}  ${_AI_DIM}(DOT_AI_PROVIDER=$DOT_AI_PROVIDER)${_AI_OFF}"
   _ai_field "model" "$_AI_CYA"  "$model"
   _ai_field "url"   "$_AI_DIM"  "$endpoint"
   _ai_field "keys"  "$_AI_DIM"  "${(j: · :)keys}"
