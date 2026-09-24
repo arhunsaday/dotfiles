@@ -12,6 +12,7 @@ import gzip
 import hashlib
 import json
 import os
+import plistlib
 import re
 import shutil
 import sqlite3
@@ -27,16 +28,36 @@ from pathlib import Path
 PROJECTS_DIR = Path.home() / ".claude" / "projects"
 COOKIES_DB = Path.home() / "Library/Application Support/Claude/Cookies"
 DEFAULT_OUT = Path.home() / "Downloads" 
-UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
-      "(KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36")
+CLAUDE_APP = Path("/Applications/Claude.app")
+
+
+def desktop_ua():
+    """Claude Desktop's own User-Agent.
+
+    Cloudflare waves the "Claude/<version>" product token through and serves a bot
+    challenge to anything that merely looks like a browser, so a plain Chrome UA
+    earns a 403. Read the version off the installed app; fall back if it moved.
+    """
+    try:
+        version = plistlib.loads((CLAUDE_APP / "Contents/Info.plist").read_bytes())[
+            "CFBundleShortVersionString"]
+    except (OSError, KeyError, ValueError):
+        version = "2.7032.0"
+    return ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
+            f"(KHTML, like Gecko) Claude/{version} Chrome/152.0.7977.130 "
+            "Electron/44.4.3 Safari/537.36")
+
+
+UA = desktop_ua()
 
 # published artifacts: claude.ai hands out a version + token, the document lives on a
 # per-artifact usercontent host and comes wrapped in the web player's scaffolding
 FRAME_HEADERS = {"X-Frame-CP": "go", "X-Frame-Platform": "web", "X-Frame-Surface": "standalone"}
 FRAME_RUNTIME = re.compile(r"<!-- frame-runtime -->.*?<!-- /frame-runtime -->", re.S)
-ARTIFACT_URL = re.compile(r"https://claude\.ai/code/artifact/([0-9a-f-]{36})")
-PUBLISHED = re.compile(r"Published (?P<file>\S[^\n]*?) at "
-                       r"(?P<url>https://claude\.ai/code/artifact/(?P<uuid>[0-9a-f-]{36}))")
+ARTIFACT_ID = r"(?:[0-9a-f-]{36}|[0-9A-Za-z]{20,24})"       # frame uuid, or its short form
+ARTIFACT_URL = re.compile(rf"https://claude\.ai/(?:code/)?artifact/({ARTIFACT_ID})")
+PUBLISHED = re.compile(rf"Published (?P<file>\S[^\n]*?) at "
+                       rf"https://claude\.ai/(?:code/)?artifact/(?P<id>{ARTIFACT_ID})")
 
 ARTIFACT_EXT = {"text/html": ".html", "text/markdown": ".md", "text/plain": ".txt",
                 "image/svg+xml": ".svg", "application/vnd.ant.mermaid": ".mmd",
@@ -222,16 +243,23 @@ def render_code(session, verbose):
 
 # --- claude desktop --------------------------------------------------------
 
-def keychain(service, account):
-    result = subprocess.run(["security", "find-generic-password", "-w", "-s", service,
-                             "-a", account], capture_output=True, text=True)
+def keychain(service, account=None):
+    cmd = ["security", "find-generic-password", "-w", "-s", service]
+    if account:
+        cmd += ["-a", account]
+    result = subprocess.run(cmd, capture_output=True, text=True)
     return result.stdout.strip() if result.returncode == 0 else None
 
 
 def desktop_cookies():
     if not COOKIES_DB.exists():
         die("Claude Desktop cookie store not found. Is Claude Desktop installed and signed in?")
-    password = keychain("Claude Safe Storage", "Claude")
+    # Electron files the safeStorage key under "<app> Key"; older builds used "<app>".
+    # None is a last resort: match the service whatever the account is called next.
+    for account in ("Claude Key", "Claude", None):
+        password = keychain("Claude Safe Storage", account)
+        if password:
+            break
     if not password:
         die("Could not read the 'Claude Safe Storage' keychain item (denied or missing).")
     key = hashlib.pbkdf2_hmac("sha1", password.encode(), b"saltysalt", 1003, 16).hex()
@@ -454,14 +482,27 @@ def desktop_artifacts(conv):
     return files
 
 
-def code_artifacts():
-    """Artifacts published by Claude Code, newest first, per the local transcripts."""
+def artifact_list(key, org, rel=None):
+    """The claude.ai artifact gallery, newest first — the authoritative list.
+
+    Transcripts only know about artifacts published from a session still on this
+    machine, and only under the URL wording of the day; the gallery knows them all.
+    """
+    query = f"/frame/artifacts?org={org}" + (f"&rel={rel}" if rel else "")
+    records = [{"uuid": entry["id"],
+                "short": (entry.get("open_url") or "").rsplit("/", 1)[-1],
+                "title": entry.get("title") or "artifact",
+                "updated": entry.get("updated_at") or "",
+                "source": entry.get("source") or ""}
+               for entry in api(query, key, FRAME_HEADERS).get("artifacts", [])]
+    records.sort(key=lambda a: a["updated"], reverse=True)
+    return records
+
+
+def transcript_origins():
+    """Where a published artifact came from locally, by artifact id, per the transcripts."""
     found = {}
     for path in PROJECTS_DIR.glob("*/*.jsonl"):
-        try:
-            mtime = path.stat().st_mtime
-        except OSError:
-            continue
         for record in read_jsonl(path):
             for block in (record.get("message") or {}).get("content") or []:
                 if not isinstance(block, dict) or block.get("type") != "tool_result":
@@ -469,14 +510,35 @@ def code_artifacts():
                 text = block.get("content")
                 if isinstance(text, list):
                     text = "\n".join(c.get("text", "") for c in text if isinstance(c, dict))
-                match = PUBLISHED.search(text or "")
-                if not match:
-                    continue
-                found[match["uuid"]] = {"uuid": match["uuid"], "url": match["url"],
-                                        "file": Path(match["file"]).name,
-                                        "project": path.parent.name.replace("-", "/"),
-                                        "mtime": mtime}
-    return sorted(found.values(), key=lambda a: a["mtime"], reverse=True)
+                match = PUBLISHED.match(text or "")   # the tool's own result, not a quote of one
+                if match:
+                    # the recorded cwd is exact; the folder name turns its hyphens into slashes
+                    found[match["id"]] = {"file": Path(match["file"]).name,
+                                          "project": record.get("cwd")
+                                          or path.parent.name.replace("-", "/")}
+    return found
+
+
+def code_artifacts(key, org):
+    """The gallery, tagged with the project each artifact was published from."""
+    origins = transcript_origins()
+    records = artifact_list(key, org)
+    for record in records:
+        origin = origins.get(record["uuid"]) or origins.get(record["short"]) or {}
+        record["where"] = (Path(origin["project"]).name if origin.get("project")
+                           else record["source"])
+    return records
+
+
+def resolve_artifact(ident, key, org):
+    """Short claude.ai/artifact/<id> links only map to a frame uuid via the gallery."""
+    if "-" in ident:                                          # already a uuid
+        return ident
+    for rel in (None, "shared"):
+        for record in artifact_list(key, org, rel):
+            if record["short"] == ident:
+                return record["uuid"]
+    die(f"Artifact {ident} is not in your claude.ai artifact list.")
 
 
 def frame_meta(uuid, key, org):
@@ -547,14 +609,15 @@ def export_desktop(args):
 
 def download_code_artifacts(args):
     key, org = auth()
-    records = code_artifacts()
+    records = code_artifacts(key, org)
     if not records:
-        die(f"No published artifacts recorded in the Claude Code sessions under {PROJECTS_DIR}.")
+        die("No published artifacts on claude.ai for this account.")
 
     if args.pick:
-        entries = [f"{datetime.fromtimestamp(a['mtime']).strftime('%m-%d %H:%M')}  "
-                   f"{a['file']}  ({Path(a['project']).name})" for a in records[:args.limit]]
-        index = choose(entries, "Claude Code artifacts")
+        entries = [f"{local_time(a['updated'])}  {a['title'][:60]}"
+                   + (f"  ({a['where']})" if a["where"] else "")
+                   for a in records[:args.limit]]
+        index = choose(entries, "Claude artifacts")
         if index is None:
             return None, None
         records = [records[index]]
@@ -587,9 +650,9 @@ def download_desktop_artifacts(args):
     return files, f"{slugify(title)}-artifacts"
 
 
-def download_url_artifact(args, uuid):
+def download_url_artifact(args, ident):
     key, org = auth()
-    title, html = frame_download(uuid, key, org)
+    title, html = frame_download(resolve_artifact(ident, key, org), key, org)
     return [(safe_name(f"{slugify(title)}.html"), html)], slugify(title)
 
 
