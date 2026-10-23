@@ -28,3 +28,6 @@ export PATH="/Users/goblingarry/.rd/bin:$PATH"
 ### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
 
 # ArgoCD, Scaleway, API keys... all live in ~/.config/secrets.env — `secrets edit`
+
+# direnv: load per-directory .envrc files (`direnv allow` to trust one)
+eval "$(direnv hook zsh)"
