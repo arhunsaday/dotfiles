@@ -1,0 +1,74 @@
+{
+  "Profiles" : [
+    {
+      "Selected Text Color" : {
+        "Red Component" : 0.94999999999999996,
+        "Color Space" : "sRGB",
+        "Blue Component" : 0.94999999999999996,
+        "Alpha Component" : 1,
+        "Green Component" : 0.94999999999999996
+      },
+      "Has Hotkey" : true,
+      "HotKey Characters" : "t",
+      "Cursor Text Color" : {
+        "Red Component" : 0.050000000000000003,
+        "Color Space" : "sRGB",
+        "Blue Component" : 0.070000000000000007,
+        "Alpha Component" : 1,
+        "Green Component" : 0.050000000000000003
+      },
+      "HotKey Modifier Flags" : 1966080,
+      "HotKey Characters Ignoring Modifiers" : "t",
+      "Bold Color" : {
+        "Red Component" : 0.94999999999999996,
+        "Color Space" : "sRGB",
+        "Blue Component" : 0.94999999999999996,
+        "Alpha Component" : 1,
+        "Green Component" : 0.94999999999999996
+      },
+      "Name" : "Quake",
+      "Background Color" : {
+        "Red Component" : 0.050000000000000003,
+        "Color Space" : "sRGB",
+        "Blue Component" : 0.070000000000000007,
+        "Alpha Component" : 1,
+        "Green Component" : 0.050000000000000003
+      },
+      "Cursor Color" : {
+        "Red Component" : 0.85999999999999999,
+        "Color Space" : "sRGB",
+        "Blue Component" : 0.85999999999999999,
+        "Alpha Component" : 1,
+        "Green Component" : 0.85999999999999999
+      },
+      "Window Type" : 2,
+      "Blur" : true,
+      "HotKey Window Floats" : true,
+      "Rows" : 22,
+      "HotKey Key Code" : 17,
+      "Use Separate Colors for Light and Dark Mode" : false,
+      "Blur Radius" : 12,
+      "Screen" : -1,
+      "Transparency" : 0.25,
+      "HotKey Window AutoHides" : true,
+      "Rewritable" : true,
+      "Dynamic Profile Parent Name" : "Default",
+      "Selection Color" : {
+        "Red Component" : 0.25,
+        "Color Space" : "sRGB",
+        "Blue Component" : 0.40000000000000002,
+        "Alpha Component" : 1,
+        "Green Component" : 0.29999999999999999
+      },
+      "Foreground Color" : {
+        "Red Component" : 0.85999999999999999,
+        "Color Space" : "sRGB",
+        "Blue Component" : 0.85999999999999999,
+        "Alpha Component" : 1,
+        "Green Component" : 0.85999999999999999
+      },
+      "Guid" : "quake-dropdown-0001",
+      "HotKey Window Animates" : false
+    }
+  ]
+}
