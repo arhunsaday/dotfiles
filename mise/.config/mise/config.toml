@@ -1,0 +1,50 @@
+# Global mise config — https://mise.jdx.dev
+# Not active yet: brew / fnm / sdkman still provide these. To switch, install
+# mise and add `eval "$(mise activate zsh)"` to .zshrc, then drop the old
+# managers (fnm env, sdkman-init, JAVA_HOME, GOROOT) so they do not shadow it.
+
+[tools]
+# Runtimes
+node = "26"
+pnpm = "latest"
+java = "temurin-21"
+go = "1.27"
+rust = "stable"
+python = "3.14"
+uv = "latest"
+
+# Kubernetes / cloud
+kubectl = "latest"
+k9s = "latest"
+helm = "latest"
+argocd = "latest"
+terraform = "latest"
+scaleway = "latest"
+supabase = "latest"
+
+# Git
+gh = "latest"
+glab = "latest"
+lazygit = "latest"
+lazydocker = "latest"
+
+# Shell
+starship = "latest"
+neovim = "latest"
+tmux = "latest"
+fzf = "latest"
+fd = "latest"
+bat = "latest"
+eza = "latest"
+zoxide = "latest"
+jq = "latest"
+yq = "latest"
+
+# Misc
+hyperfine = "latest"
+k6 = "latest"
+bitwarden = "latest"
+
+[settings]
+# Same as legacy_version_file in .asdfrc: honour .nvmrc / .python-version
+idiomatic_version_file_enable_tools = ["node", "python"]
