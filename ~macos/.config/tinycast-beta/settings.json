@@ -80,8 +80,13 @@
     "newChatAfterMinutes": 5,
     "toolRounds": 25,
     "commands": {
-      "ai-chat-window": {
+      "ai-chat": {
         "shortcut": "hyper+a",
+        "alias": null,
+        "showInLauncher": true
+      },
+      "ai-chat-window": {
+        "shortcut": "hyper+g",
         "alias": null,
         "showInLauncher": true
       }

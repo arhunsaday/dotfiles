@@ -42,16 +42,12 @@
         "Green Component" : 0.85999999999999999
       },
       "Window Type" : 2,
-      "Blur" : true,
-      "HotKey Window Floats" : true,
       "Rows" : 22,
       "HotKey Key Code" : 17,
       "Use Separate Colors for Light and Dark Mode" : false,
-      "Blur Radius" : 12,
-      "Screen" : -1,
-      "Transparency" : 0.25,
-      "HotKey Window AutoHides" : true,
       "Rewritable" : true,
+      "Blur Radius" : 12,
+      "Transparency" : 0.25,
       "Dynamic Profile Parent Name" : "Default",
       "Selection Color" : {
         "Red Component" : 0.25,
