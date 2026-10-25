@@ -12,7 +12,7 @@ export PS1="\u@\h \[\033[32m\]\w\[\033[33m\]\$(parse_git_branch)\[\033[00m\] \n 
 . "$HOME/.cargo/env"
 
 ### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
-export PATH="/Users/goblingarry/.rd/bin:$PATH"
+export PATH="/Users/asaday/.rd/bin:$PATH"
 ### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
 
 # Same single secrets file as zsh (see zsh/.config/zsh/exports.zsh, secrets.env.example)

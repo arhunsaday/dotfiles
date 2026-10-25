@@ -24,7 +24,7 @@ export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
 export JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home
 
 ### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
-export PATH="/Users/goblingarry/.rd/bin:$PATH"
+export PATH="/Users/asaday/.rd/bin:$PATH"
 ### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
 
 # ArgoCD, Scaleway, API keys... all live in ~/.config/secrets.env — `secrets edit`
