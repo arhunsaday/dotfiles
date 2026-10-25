@@ -232,7 +232,7 @@
     "claude-desktop": true,
     "windsurf": true,
     "cursor-global": true,
-    "cursor-workspace": true,
+    "cursor-workspace": true
   },
   "github.copilot.chat.editor.temporalContext.enabled": true,
   "github.copilot.chat.inlineChatCompletionTrigger.enabled": true,

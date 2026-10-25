@@ -55,7 +55,7 @@
   "commands": {
     "builtInEnabled": true,
     "builtIn": {},
-    "enabled": false,
+    "enabled": true,
     "showInLauncher": true
   },
   "quicklinks": {
