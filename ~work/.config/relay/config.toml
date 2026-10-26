@@ -1,0 +1,72 @@
+version = 1
+timezone = "Europe/Paris"
+ca_bundle = "/Users/asaday/.config/relay/corporate-ca.pem"
+notifications = "failures"
+retention_days = 90
+detail_retention_days = 30
+
+[jira]
+enabled = true
+base_url = "https://proactionws.ent.cgi.com/jira"
+jql = "assignee = currentUser() AND resolution = Unresolved"
+team = "Work"
+comments = true
+initial_comments = 10
+source_label = ""
+intake_state = ""
+max_creates = 50
+
+[jira.project_map]
+OPCOATLAS = "Numéric Emploi"
+PARCUS = "Parcus"
+
+[jira.field_ownership]
+title = false
+status = false
+due_date = false
+
+[jira.status_map]
+
+[calendar]
+enabled = true
+source = "apple"
+keep_google_titles = true
+apple_calendar = "7CCD1EA1-AAAC-485E-A930-B75C7639CF45"
+outlook_calendar_id = 106
+google_calendar_id = "47b6fd43cc52896124cde806f76df4fd7ce1d045297dcb3e30bfdb149724f4cf@group.calendar.google.com"
+calendar_name = "CGI"
+past_days = 1
+future_days = 90
+privacy = "full"
+exclude_summaries = [
+    "Jour férié",
+]
+weekday_only_summaries = []
+delete_min = 5
+delete_ratio = 0.25
+
+[schedules.jira]
+enabled = true
+minutes = 60
+start_hour = 8
+end_hour = 18
+weekdays = [
+    1,
+    2,
+    3,
+    4,
+    5,
+]
+
+[schedules.calendar]
+enabled = true
+minutes = 60
+start_hour = 8
+end_hour = 18
+weekdays = [
+    1,
+    2,
+    3,
+    4,
+    5,
+]

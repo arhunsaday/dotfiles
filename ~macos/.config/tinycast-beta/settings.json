@@ -1,7 +1,7 @@
 {
   "general": {
     "launcherShortcut": "cmd+space",
-    "showInMenuBar": false,
+    "showInMenuBar": true,
     "automaticallyCheckForUpdates": true,
     "popToRootSeconds": 0,
     "escapeKeyBehavior": "navigateBackOrClose",
@@ -13,7 +13,6 @@
     "theme": "system",
     "interfaceSize": "standard",
     "compactMode": true,
-    "showFavoritesInCompactMode": true,
     "followCursorAcrossDisplays": true,
     "dragToReposition": false
   },
@@ -81,13 +80,13 @@
     "toolRounds": 25,
     "commands": {
       "ai-chat": {
-        "shortcut": "hyper+a",
         "alias": null,
+        "shortcut": "hyper+a",
         "showInLauncher": true
       },
       "ai-chat-window": {
-        "shortcut": "hyper+g",
         "alias": null,
+        "shortcut": "hyper+g",
         "showInLauncher": true
       }
     }
@@ -117,8 +116,8 @@
     "showInLauncher": true,
     "commands": {
       "search-files": {
-        "shortcut": "hyper+s",
         "alias": null,
+        "shortcut": "hyper+s",
         "showInLauncher": true
       }
     }
@@ -130,8 +129,8 @@
     "folder": null,
     "commands": {
       "show-notes": {
-        "shortcut": "hyper+n",
         "alias": null,
+        "shortcut": "hyper+n",
         "showInLauncher": true
       }
     }
@@ -155,41 +154,41 @@
     "layoutsShowInLauncher": true,
     "roomsShowInLauncher": true,
     "shortcuts": {
-      "left-half": null,
-      "right-half": null,
-      "top-half": null,
+      "almost-maximize": null,
       "bottom-half": null,
-      "top-left-quarter": null,
-      "top-right-quarter": null,
       "bottom-left-quarter": null,
       "bottom-right-quarter": null,
-      "first-three-fourths": null,
-      "last-three-fourths": null,
-      "first-third": null,
-      "center-third": null,
-      "last-third": null,
-      "first-two-thirds": null,
-      "last-two-thirds": null,
-      "maximize": null,
-      "almost-maximize": null,
-      "reasonable-size": null,
-      "maximize-height": null,
-      "maximize-width": null,
       "center": null,
       "center-half": null,
+      "center-third": null,
       "center-two-thirds": null,
+      "first-third": null,
+      "first-three-fourths": null,
+      "first-two-thirds": null,
+      "last-third": null,
+      "last-three-fourths": null,
+      "last-two-thirds": null,
+      "left-half": null,
       "make-larger": null,
       "make-smaller": null,
-      "restore": null,
+      "maximize": null,
+      "maximize-height": null,
+      "maximize-width": null,
+      "move-down": null,
       "move-left": null,
       "move-right": null,
       "move-up": null,
-      "move-down": null,
       "next-display": null,
+      "next-space": null,
       "previous-display": null,
-      "toggle-fullscreen": null,
       "previous-space": null,
-      "next-space": null
+      "reasonable-size": null,
+      "restore": null,
+      "right-half": null,
+      "toggle-fullscreen": null,
+      "top-half": null,
+      "top-left-quarter": null,
+      "top-right-quarter": null
     },
     "aliases": {},
     "customSizes": [],
@@ -207,8 +206,8 @@
     ],
     "commands": {
       "clipboard-history": {
-        "shortcut": "hyper+v",
         "alias": null,
+        "shortcut": "hyper+v",
         "showInLauncher": true
       }
     }
@@ -218,8 +217,8 @@
     "gridColumns": 8,
     "commands": {
       "search-emoji": {
-        "shortcut": "hyper+e",
         "alias": null,
+        "shortcut": "hyper+e",
         "showInLauncher": true
       }
     }
@@ -232,10 +231,10 @@
     "autoJoinConfirms": true,
     "autoJoinNamedProvidersOnly": false,
     "meetingBrowser": null,
-    "menuBar": "disabled",
+    "menuBar": "meetingTitle",
     "menuBarUpcomingEvents": "today",
     "menuBarLinkedEventsOnly": true,
-    "menuBarHidesWhenEmpty": false,
+    "menuBarHidesWhenEmpty": true,
     "hideCurrentEventAfterMinutes": "never",
     "commands": {}
   },
