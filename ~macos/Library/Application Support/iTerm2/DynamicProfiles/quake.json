@@ -1,6 +1,8 @@
 {
   "Profiles" : [
     {
+      "Title Components" : 34,
+      "Has Hotkey" : true,
       "Selected Text Color" : {
         "Red Component" : 0.94999999999999996,
         "Color Space" : "sRGB",
@@ -8,8 +10,7 @@
         "Alpha Component" : 1,
         "Green Component" : 0.94999999999999996
       },
-      "Has Hotkey" : true,
-      "HotKey Characters" : "t",
+      "Custom Tab Title" : "iTerm2 Quake",
       "Cursor Text Color" : {
         "Red Component" : 0.050000000000000003,
         "Color Space" : "sRGB",
@@ -17,6 +18,7 @@
         "Alpha Component" : 1,
         "Green Component" : 0.050000000000000003
       },
+      "HotKey Window Animates" : false,
       "HotKey Modifier Flags" : 1966080,
       "HotKey Characters Ignoring Modifiers" : "t",
       "Bold Color" : {
@@ -34,6 +36,7 @@
         "Alpha Component" : 1,
         "Green Component" : 0.050000000000000003
       },
+      "Window Type" : 2,
       "Cursor Color" : {
         "Red Component" : 0.85999999999999999,
         "Color Space" : "sRGB",
@@ -41,7 +44,6 @@
         "Alpha Component" : 1,
         "Green Component" : 0.85999999999999999
       },
-      "Window Type" : 2,
       "Rows" : 22,
       "HotKey Key Code" : 17,
       "Use Separate Colors for Light and Dark Mode" : false,
@@ -56,6 +58,7 @@
         "Alpha Component" : 1,
         "Green Component" : 0.29999999999999999
       },
+      "Use Custom Tab Title" : true,
       "Foreground Color" : {
         "Red Component" : 0.85999999999999999,
         "Color Space" : "sRGB",
@@ -64,7 +67,7 @@
         "Green Component" : 0.85999999999999999
       },
       "Guid" : "quake-dropdown-0001",
-      "HotKey Window Animates" : false
+      "HotKey Characters" : "t"
     }
   ]
 }

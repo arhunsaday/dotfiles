@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>appearanceSize</key>
+	<string>3</string>
+	<key>appearanceStyle</key>
+	<string>2</string>
+	<key>exceptions</key>
+	<string>[{"hide":"2","ignore":"0","bundleIdentifier":"com.apple.finder"},{"hide":"0","ignore":"2","bundleIdentifier":"com.apple.ScreenSharing"},{"hide":"0","ignore":"2","bundleIdentifier":"com.microsoft.rdc.macos"},{"hide":"0","ignore":"2","bundleIdentifier":"com.teamviewer.TeamViewer"},{"hide":"0","ignore":"2","bundleIdentifier":"org.virtualbox.app.VirtualBoxVM"},{"hide":"0","ignore":"2","bundleIdentifier":"com.parallels."},{"hide":"0","ignore":"2","bundleIdentifier":"com.citrix.XenAppViewer"},{"hide":"0","ignore":"2","bundleIdentifier":"com.citrix.receiver.icaviewer.mac"},{"hide":"0","ignore":"2","bundleIdentifier":"com.nicesoftware.dcvviewer"},{"hide":"0","ignore":"2","bundleIdentifier":"com.vmware.fusion"},{"hide":"0","ignore":"2","bundleIdentifier":"com.utmapp.UTM"},{"hide":"1","ignore":"0","bundleIdentifier":"com.McAfee.McAfeeSafariHost"},{"hide":"2","ignore":"0","windowTitleContains":["Quake"],"bundleIdentifier":"com.googlecode.iterm2"}]</string>
+	<key>holdShortcut</key>
+	<dict>
+		<key>secureData</key>
+		<data>
+		YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9i
+		amVjdHMSAAGGoF8QD05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGlCwwZGhtV
+		JG51bGzWDQ4PEBESExQVFBcUXW1vZGlmaWVyRmxhZ3NfEBtjaGFyYWN0ZXJz
+		SWdub3JpbmdNb2RpZmllcnNWJGNsYXNzWmNoYXJhY3RlcnNXa2V5Q29kZVd2
+		ZXJzaW9ugAOAAIAEgACAAoAAEf//EgAIAADSHB0eH1okY2xhc3NuYW1lWCRj
+		bGFzc2VzWlNSU2hvcnRjdXSiHiBYTlNPYmplY3QIERokKTI3SUxRU1lfbHqY
+		n6qyury+wMLExsnO097n8vUAAAAAAAABAQAAAAAAAAAhAAAAAAAAAAAAAAAA
+		AAAA/g==
+		</data>
+		<key>string</key>
+		<string>⌥</string>
+	</dict>
+	<key>menubarIconShown</key>
+	<string>false</string>
+	<key>nextWindowGesture</key>
+	<string>0</string>
+	<key>screenRecordingPermissionSkipped</key>
+	<string>true</string>
+	<key>settingsWindowShownOnFirstLaunch</key>
+	<string>true</string>
+	<key>shortcutCount</key>
+	<string>1</string>
+	<key>shortcutStyle</key>
+	<string>0</string>
+	<key>startAtLogin</key>
+	<string>true</string>
+	<key>updatePolicy</key>
+	<string>1</string>
+</dict>
+</plist>
