@@ -65,6 +65,17 @@ disabled=false
 format = '[$symbol$context(\($namespace\))]($style) '
 symbol = '🐋 '
 
+[custom.scaleway]
+command = '''
+p="${SCW_PROFILE:-$(awk '/^active_profile:/ {print $2}' "${SCW_CONFIG_PATH:-$HOME/.config/scw/config.yaml}" 2>/dev/null)}"
+printf '%s' "${p:-default}"
+'''
+when = 'test -n "$SCW_PROFILE$SCW_ACCESS_KEY" || test -f "${SCW_CONFIG_PATH:-$HOME/.config/scw/config.yaml}"'
+shell = ["sh"]
+symbol = '⛅ '
+style = 'bold fg:#a855f7'
+format = '[$symbol$output]($style) '
+
 [cmd_duration]
 min_time = 500
 format = 'took [$duration](bold yellow)'
