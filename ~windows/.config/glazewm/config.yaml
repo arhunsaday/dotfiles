@@ -1,0 +1,228 @@
+# GlazeWM — same keys as AeroSpace on the mac (~macos/.config/aerospace/aerospace.toml)
+# Loaded through GLAZEWM_CONFIG_PATH, set by ~windows/setup.ps1.
+# Reference: https://github.com/glzr-io/glazewm/blob/main/resources/assets/sample-config.yaml
+
+general:
+  startup_commands: []
+  shutdown_commands: []
+  config_reload_commands: []
+  focus_follows_cursor: false
+  toggle_workspace_on_refocus: false
+
+  # AeroSpace: on-focused-monitor-changed = move-mouse monitor-lazy-center
+  cursor_jump:
+    enabled: true
+    trigger: 'monitor_focus'
+
+  hide_method: 'cloak'
+  # Lists windows from every workspace in Alt+Tab too (the taskbar is hidden);
+  # picking one switches to its workspace
+  show_all_in_taskbar: true
+
+gaps:
+  scale_with_dpi: true
+  inner_gap: '10px'
+  outer_gap:
+    top: '10px'
+    right: '10px'
+    bottom: '10px'
+    left: '10px'
+
+# Borders and corner styles only render on Windows 11
+window_effects:
+  focused_window:
+    border:
+      enabled: true
+      color: '#61afef'
+  other_windows:
+    border:
+      enabled: true
+      color: '#3e4451'
+
+window_behavior:
+  initial_state: 'tiling'
+  state_defaults:
+    floating:
+      centered: true
+      shown_on_top: false
+    fullscreen:
+      maximized: false
+      shown_on_top: false
+
+# 1-4 on the main monitor, Q/W/E/R on the second one when it is plugged in
+# (a workspace bound to a missing monitor falls back to an existing one).
+# Names stay numeric so the YASB bar sorts them; display_name is what it shows.
+# No keep_alive: an empty workspace disappears once left, so the bar only
+# lists the ones in use (alt+<key> recreates it).
+workspaces:
+- name: '1'
+  bind_to_monitor: 0
+- name: '2'
+  bind_to_monitor: 0
+- name: '3'
+  bind_to_monitor: 0
+- name: '4'
+  bind_to_monitor: 0
+- name: '5'
+  bind_to_monitor: 1
+- name: '8'
+  bind_to_monitor: 1
+- name: '9'
+  bind_to_monitor: 1
+- name: '11'
+  display_name: 'Q'
+  bind_to_monitor: 1
+- name: '12'
+  display_name: 'W'
+  bind_to_monitor: 1
+- name: '13'
+  display_name: 'E'
+  bind_to_monitor: 1
+- name: '14'
+  display_name: 'R'
+  bind_to_monitor: 1
+
+window_rules:
+- commands: [ 'ignore' ]
+  match:
+  - window_title: { regex: '[Pp]icture.in.[Pp]icture' }
+    window_class: { regex: 'Chrome_WidgetWin_1|MozillaDialogClass' }
+  - window_process: { equals: 'Flow.Launcher' }
+  - window_process: { equals: 'EXCEL' }
+    window_class: { not_regex: 'XLMAIN' }
+  - window_process: { equals: 'WINWORD' }
+    window_class: { not_regex: 'OpusApp' }
+  - window_process: { equals: 'POWERPNT' }
+    window_class: { not_regex: 'PPTFrameClass' }
+
+# Same floating exceptions as AeroSpace's on-window-detected rules
+- commands: [ 'set-floating' ]
+  match:
+  - window_process: { regex: '^(Spotify|Notion|ShareX|WinCompose|Taskmgr|SystemSettings|ApplicationFrameHost)$' }
+  - window_process: { equals: 'explorer' }
+    window_class: { equals: 'OperationStatusWindow' }
+
+binding_modes:
+- name: 'resize'
+  keybindings:
+  - commands: [ 'resize --width -50px' ]
+    bindings: [ 'h', 'left' ]
+  - commands: [ 'resize --width +50px' ]
+    bindings: [ 'l', 'right' ]
+  - commands: [ 'resize --height +50px' ]
+    bindings: [ 'j', 'down' ]
+  - commands: [ 'resize --height -50px' ]
+    bindings: [ 'k', 'up' ]
+  - commands: [ 'wm-disable-binding-mode --name resize' ]
+    bindings: [ 'escape', 'enter' ]
+
+- name: 'service'
+  keybindings:
+  - commands: [ 'wm-reload-config', 'wm-disable-binding-mode --name service' ]
+    bindings: [ 'escape' ]
+  - commands: [ 'wm-redraw', 'wm-disable-binding-mode --name service' ]
+    bindings: [ 'r' ]
+  - commands: [ 'toggle-floating --centered', 'wm-disable-binding-mode --name service' ]
+    bindings: [ 'f' ]
+
+keybindings:
+# Focus / move, crossing into the next monitor at the edge
+- commands: [ 'focus --direction left' ]
+  bindings: [ 'alt+h' ]
+- commands: [ 'focus --direction down' ]
+  bindings: [ 'alt+j' ]
+- commands: [ 'focus --direction up' ]
+  bindings: [ 'alt+k' ]
+- commands: [ 'focus --direction right' ]
+  bindings: [ 'alt+l' ]
+
+- commands: [ 'move --direction left' ]
+  bindings: [ 'alt+shift+h' ]
+- commands: [ 'move --direction down' ]
+  bindings: [ 'alt+shift+j' ]
+- commands: [ 'move --direction up' ]
+  bindings: [ 'alt+shift+k' ]
+- commands: [ 'move --direction right' ]
+  bindings: [ 'alt+shift+l' ]
+
+# AeroSpace: ctrl-alt-h/l = move-node-to-monitor
+- commands: [ 'move --workspace-in-direction left' ]
+  bindings: [ 'ctrl+alt+h' ]
+- commands: [ 'move --workspace-in-direction right' ]
+  bindings: [ 'ctrl+alt+l' ]
+
+# Layout
+- commands: [ 'toggle-tiling-direction' ]
+  bindings: [ 'alt+oem_question' ]
+- commands: [ 'resize --width -50px' ]
+  bindings: [ 'alt+oem_minus' ]
+- commands: [ 'resize --width +50px' ]
+  bindings: [ 'alt+oem_plus' ]
+- commands: [ 'wm-enable-binding-mode --name resize' ]
+  bindings: [ 'ctrl+alt+r' ]
+- commands: [ 'wm-enable-binding-mode --name service' ]
+  bindings: [ 'alt+shift+oem_semicolon' ]
+
+# Window state
+- commands: [ 'toggle-floating --centered' ]
+  bindings: [ 'alt+shift+t' ]
+- commands: [ 'toggle-fullscreen' ]
+  bindings: [ 'alt+shift+f' ]
+- commands: [ 'set-floating --centered --width 50% --height 96%' ]
+  bindings: [ 'alt+shift+c' ]
+- commands: [ 'toggle-minimized' ]
+  bindings: [ 'alt+m' ]
+
+# WM
+- commands: [ 'wm-toggle-pause' ]
+  bindings: [ 'alt+shift+p' ]
+- commands: [ 'wm-reload-config' ]
+  bindings: [ 'alt+shift+o' ]
+
+# Workspaces
+- commands: [ 'focus --workspace 1' ]
+  bindings: [ 'alt+1' ]
+- commands: [ 'focus --workspace 2' ]
+  bindings: [ 'alt+2' ]
+- commands: [ 'focus --workspace 3' ]
+  bindings: [ 'alt+3' ]
+- commands: [ 'focus --workspace 4' ]
+  bindings: [ 'alt+4' ]
+- commands: [ 'focus --workspace 5' ]
+  bindings: [ 'alt+5' ]
+- commands: [ 'focus --workspace 8' ]
+  bindings: [ 'alt+8' ]
+- commands: [ 'focus --workspace 9' ]
+  bindings: [ 'alt+9' ]
+- commands: [ 'focus --workspace 11' ]
+  bindings: [ 'alt+q' ]
+- commands: [ 'focus --workspace 12' ]
+  bindings: [ 'alt+w' ]
+- commands: [ 'focus --workspace 13' ]
+  bindings: [ 'alt+e' ]
+- commands: [ 'focus --workspace 14' ]
+  bindings: [ 'alt+r' ]
+
+# Move the window to a workspace and follow it
+- commands: [ 'move --workspace 1', 'focus --workspace 1' ]
+  bindings: [ 'alt+shift+1' ]
+- commands: [ 'move --workspace 2', 'focus --workspace 2' ]
+  bindings: [ 'alt+shift+2' ]
+- commands: [ 'move --workspace 3', 'focus --workspace 3' ]
+  bindings: [ 'alt+shift+3' ]
+- commands: [ 'move --workspace 4', 'focus --workspace 4' ]
+  bindings: [ 'alt+shift+4' ]
+- commands: [ 'move --workspace 5', 'focus --workspace 5' ]
+  bindings: [ 'alt+shift+5' ]
+- commands: [ 'move --workspace 8', 'focus --workspace 8' ]
+  bindings: [ 'alt+shift+8' ]
+- commands: [ 'move --workspace 9', 'focus --workspace 9' ]
+  bindings: [ 'alt+shift+9' ]
+- commands: [ 'move --workspace 11', 'focus --workspace 11' ]
+  bindings: [ 'alt+shift+q' ]
+- commands: [ 'move --workspace 12', 'focus --workspace 12' ]
+  bindings: [ 'alt+shift+w' ]
+- commands: [ 'move --workspace 13', 'focus --workspace 13' ]
+  bindings: [ 'alt+shift+e' ]
+- commands: [ 'move --workspace 14', 'focus --workspace 14' ]
+  bindings: [ 'alt+shift+r' ]

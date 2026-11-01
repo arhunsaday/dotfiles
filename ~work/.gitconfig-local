@@ -1,3 +1,7 @@
 # work environment identity - linked by ./dotfiles.sh install work
 [user]
     email = arhun.saday@cgi.com
+
+# Git Credential Manager: plain username + token for the client's GitLab, no OAuth
+[credential "https://git.groupe-es.net"]
+    provider = generic

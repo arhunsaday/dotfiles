@@ -1,0 +1,34 @@
+# Rio on Windows, loaded through RIO_CONFIG_HOME (set by ~windows/setup.ps1).
+# Options: https://rioterm.com/docs/config
+
+confirm-before-quit = false
+padding = [6, 8]
+
+[fonts]
+family = "JetBrainsMono Nerd Font Mono"
+size = 14
+
+# Through cmd so %LOCALAPPDATA% gets expanded
+[shell]
+program = "cmd.exe"
+args = ["/c", "%LOCALAPPDATA%\\Programs\\Git\\bin\\bash.exe", "-i", "-l"]
+
+[navigation]
+mode = "Tab"
+
+[window]
+decorations = "Enabled"
+
+# One Half Dark, same as Windows Terminal and WezTerm
+[colors]
+background = '#282c34'
+foreground = '#dcdfe4'
+cursor = '#a3b3cc'
+black = '#282c34'
+red = '#e06c75'
+green = '#98c379'
+yellow = '#e5c07b'
+blue = '#61afef'
+magenta = '#c678dd'
+cyan = '#56b6c2'
+white = '#dcdfe4'

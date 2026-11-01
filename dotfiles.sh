@@ -110,6 +110,7 @@ usage() {
     Packages named ~macos / ~linux / ~windows are stowed only on the matching
     platform, and ~work / ~perso only for the chosen environment. The choice is
     remembered in $(tilde "$ENV_FILE"), so later runs can omit it.
+    On Windows, install runs ~windows/setup.ps1 instead of stow.
 
   ${BOLD}Secrets${RESET}
     Every API key and token lives in one file outside this repo,
@@ -336,6 +337,16 @@ if [[ "$ACTION" == "install" && -z "$ENVIRONMENT" ]]; then
     fi
     usage
     exit 1
+fi
+
+# No stow, and no symlinks without admin rights: Windows has its own installer
+if [[ "$PLATFORM" == "~windows" ]]; then
+    if [[ "$ACTION" != "install" ]]; then
+        printf '\n  %s✖%s uninstall is not supported on Windows\n\n' "$RED" "$RESET"
+        exit 1
+    fi
+    exec powershell.exe -NoProfile -ExecutionPolicy Bypass \
+        -File "$(cygpath -w "$DOTFILES_DIR/~windows/setup.ps1")" -Environment "$ENVIRONMENT"
 fi
 
 cd "$DOTFILES_DIR" || exit 1

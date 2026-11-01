@@ -1,377 +1,213 @@
-:root {
-  /* Color palette */
-  --mauve: #c678dd;
-  --red: #e06c75;
-  --yellow: #e5c07b;
-  --blue: #61afef;
-  --lavender: #b4befe;
-  --white: #abb2bf;
-  --text: #dde1eb;
-  --subtext1: #b6bdca;
-  --subtext0: #9da5b4;
-  --overlay2: #7f848e;
-  --overlay1: #5c6370;
-  --overlay0: #4b5263;
-  --surface2: #3e4451;
-  --surface1: #282c34;
-  --surface0: #21252b;
-  --base: #282c34;
-  --crust: rgba(0, 0, 0, 0.5);
-
-  /* Spacing */
-  --spacing-xs: 2px;
-  --spacing-sm: 3px;
-  --spacing-md: 6px;
-  --spacing-lg: 8px;
-  --spacing-xl: 12px;
-
-  /* Border radius */
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
-  --radius-xl: 12px;
-
-  /* Font sizes */
-  --font-xs: 12px;
-  --font-sm: 14px;
-  --font-md: 16px;
-  --font-lg: 18px;
-  --font-xl: 20px;
-  --font-xxl: 22px;
-
-  /* Dimensions */
-  --workspace-btn-size: 10px;
-  --workspace-btn-active-width: 40px;
-  --icon-size-sm: 14px;
-  --icon-size-md: 16px;
-  --icon-size-lg: 18px;
-  --icon-size-xl: 20px;
-}
-
-/* =============================================================================
-   GLOBAL STYLES
-   ============================================================================= */
-
+/* One Dark, same palette as starship.toml.
+   Text in Segoe UI, Nerd Font only for the icons (<span> parts get class "icon"). */
 * {
-  font-size: var(--font-xs);
-  color: var(--text);
-  font-weight: 600;
   font-family: "JetBrainsMono NF";
+  font-size: 12px;
+  color: #abb2bf;
   margin: 0;
   padding: 0;
 }
 
-QToolTip {
-  padding: var(--spacing-md);
-  color: #cdd6f4;
-  font-size: var(--font-xs);
-  background-color: #1e1e2e;
-  border: 0px solid #313244;
-  border-radius: var(--radius-md);
+.icon,
+.widget .label span {
+  font-family: "JetBrainsMono NF";
+  font-size: 14px;
 }
+
+/* --- bar: one floating pill --------------------------------------------- */
 
 .yasb-bar {
-  padding: 0;
-  margin: 0;
-  background-color: var(--crust);
-  border-radius: 7px;
-  border: 1px solid #313244;
+  background-color: rgba(30, 33, 39, 0.94);
+  border: 1px solid rgba(171, 178, 191, 0.1);
+  border-radius: 10px;
 }
 
-.icon {
-  font-size: var(--icon-size-md);
-  margin: 0 var(--spacing-sm);
+.container-left {
+  margin-left: 4px;
 }
-
-.memory-widget,
-.cpu-widget,
-.battery-widget,
-.volume-widget,
-.microphone-widget,
-.notification-widget,
-.power-menu-widget,
-.home-widget,
-.komorebi-active-layout,
-.komorebi-workspaces {
-  padding: 0px;
+.container-right {
+  margin-right: 6px;
 }
 
 .widget {
-  padding: 0 7px;
-  margin: 0;
+  padding: 0 6px;
 }
 
-.widget .label {
-  padding: 0px var(--spacing-xs);
+.widget .icon {
+  padding-right: 5px;
 }
 
-/* =============================================================================
-   KOMOREBI STYLES
-   ============================================================================= */
+/* --- home --------------------------------------------------------------- */
 
-.komorebi-active-layout,
-.komorebi-workspaces,
-.home-widget {
-  padding: 0 5px;
-}
-
-.komorebi-active-layout {
-  padding: 0 var(--spacing-sm);
-}
-
-.komorebi-active-layout .label {
-  font-weight: 600;
-  padding: var(--spacing-xs) 0 0 0;
-}
-
-.komorebi-workspaces .ws-btn {
-  border: none;
-  color: transparent;
-  margin: 0 var(--spacing-sm);
-  border-radius: 5px;
-  font-size: 1px;
-  background-color: rgba(255, 255, 255, 0.4);
-  height: var(--workspace-btn-size);
-  width: var(--workspace-btn-size);
-}
-
-.komorebi-workspaces .ws-btn:hover {
-  background-color: var(--blue);
-}
-
-.komorebi-workspaces .ws-btn.populated {
-  background-color: var(--lavender);
-}
-
-.komorebi-workspaces .ws-btn.active {
-  width: var(--workspace-btn-active-width);
-  max-width: var(--workspace-btn-active-width);
-  background-color: var(--blue);
-}
-
-.komorebi-workspaces .float-override {
-  color: var(--overlay2);
-  padding-left: var(--spacing-md);
-}
-
-.komorebi-workspaces .workspace-layer {
-  padding-left: var(--spacing-md);
-}
-
-.komorebi-workspaces .workspace-layer.tiling {
-  color: #a6e3a1;
-}
-
-.komorebi-workspaces .workspace-layer.floating {
-  color: #eba0ac;
-}
-
-/* =============================================================================
-   POWER MENU WIDGET
-   ============================================================================= */
-
-.power-menu-widget {
-  padding-right: 12px;
-}
-
-.power-menu-widget .label {
-  color: var(--red);
+.home-widget .label {
+  font-family: "JetBrainsMono NF";
+  color: #d7dae0;
   font-size: 15px;
+  padding: 0 2px;
 }
 
-.power-menu-popup {
-  background-color: transparent;
-}
-
-.power-menu-popup .button {
-  padding: 0;
-  width: 180px;
-  height: 230px;
-  border-radius: var(--radius-lg);
-  background-color: var(--crust);
-  color: var(--text);
-  border: 4px solid rgba(58, 59, 83, 0);
-  margin: 0px;
-}
-
-.power-menu-popup .button.hover {
-  background-color: var(--base);
-  border: 4px solid var(--base);
-}
-
-.power-menu-popup .button .label {
-  margin-bottom: var(--spacing-lg);
-  font-size: var(--font-md);
-  font-weight: 500;
-  color: var(--overlay2);
-}
-
-.power-menu-popup .button .icon {
-  font-size: 64px;
-  padding-top: 32px;
-  color: var(--surface2);
-}
-
-.power-menu-popup .button.cancel .icon {
-  padding: 0;
-  margin: 0;
-}
-
-.power-menu-popup .button.cancel .label {
-  color: var(--red);
-  margin: 0;
-}
-
-.power-menu-popup .button.cancel {
-  height: 32px;
-  border-radius: var(--radius-sm);
-}
-
-.uptime {
-  font-size: var(--font-sm);
-  margin-bottom: 10px;
-  color: var(--surface2);
-  font-weight: 600;
-}
-
-/* =============================================================================
-   MEDIA & SYSTEM WIDGETS
-   ============================================================================= */
-
-.microphone-widget .icon {
-  font-size: var(--icon-size-lg);
-  color: var(--mauve);
-}
-
-.volume-widget .icon {
-  font-size: var(--icon-size-xl);
-  color: var(--blue);
-  margin: 0px var(--spacing-xs) 0 0;
-}
-
-.weather-widget .icon {
-  font-size: var(--icon-size-lg);
-  margin: 0 var(--spacing-xs) 1px 0;
-  color: var(--yellow);
-}
-
-.media-widget {
-  padding: 2px 0px 0;
-  margin: 0;
-  border-radius: 0;
-}
-
-.media-widget .label {
-  color: #bac2db;
-  padding: 0px;
-  padding-right: var(--spacing-sm);
-  font-size: var(--font-xs) 1.5em;
-}
-
-.media-widget .btn {
-  color: #7a7f8b;
-  padding: 0 var(--spacing-sm);
-  margin: 0;
-  font-family: "JetBrainsMono NFP";
-  font-weight: 400;
-  font-size: var(--font-xxl);
-}
-
-.media-widget .btn:hover {
-  color: #babfd3;
-}
-
-.media-widget .btn.play {
-  color: #989caa;
-}
-
-.media-widget .btn.disabled:hover,
-.media-widget .btn.disabled {
-  color: #4e525c;
-  background-color: rgba(0, 0, 0, 0);
-  font-size: var(--icon-size-xl);
-}
-
-/* =============================================================================
-   HOME WIDGET
-   ============================================================================= */
-
-.home-widget {
-  padding-left: var(--spacing-lg);
-}
-
-.home-widget .icon {
-  color: var(--lavender);
-  /* font-size: 23px; */
-  font-size: 18px;
-}
-
-.home-widget .icon:hover {
-  color: var(--text);
+.home-widget .label:hover {
+  color: #61afef;
 }
 
 .home-menu {
-  background-color: var(--crust);
-  border-radius: var(--radius-lg);
+  background-color: rgba(40, 44, 52, 0.98);
 }
 
 .home-menu .menu-item {
-  padding: var(--spacing-lg) 48px 9px var(--spacing-md);
-  font-size: var(--font-xs);
-  font-family: "Segoe UI";
-  color: var(--text);
-  font-weight: 600;
+  padding: 6px 48px 7px 16px;
 }
 
 .home-menu .menu-item:hover {
-  background-color: rgba(128, 130, 158, 0.15);
-  color: #fff;
+  background-color: rgba(97, 175, 239, 0.15);
+  color: #ffffff;
 }
 
 .home-menu .separator {
   max-height: 1px;
-  background-color: rgba(128, 130, 158, 0.3);
+  background-color: rgba(171, 178, 191, 0.15);
 }
 
-/* =============================================================================
-   NOTIFICATION WIDGET
-   ============================================================================= */
+/* --- workspaces --------------------------------------------------------- */
 
-.notification-widget {
-  margin-left: -4px;
+.glazewm-workspaces {
+  padding: 0 2px;
 }
 
-.notification-widget .icon {
-  font-size: var(--icon-size-sm);
+.glazewm-workspaces .ws-btn {
+  font-weight: 600;
+  color: #4b5263;
+  background-color: transparent;
+  border: none;
+  border-radius: 6px;
+  margin: 6px 1px;
+  min-width: 22px;
+  padding: 0 4px;
 }
 
-.notification-widget .icon.new-notification {
-  color: var(--blue);
+.glazewm-workspaces .ws-btn.populated {
+  color: #abb2bf;
 }
 
-/* =============================================================================
-   TASKBAR WIDGET
-   ============================================================================= */
-
-.taskbar-widget {
-  padding: 0;
-  margin: 0;
+.glazewm-workspaces .ws-btn.active_populated,
+.glazewm-workspaces .ws-btn.active_empty {
+  color: #abb2bf;
+  background-color: rgba(171, 178, 191, 0.1);
 }
 
-.taskbar-widget .app-icon {
-  padding: 0 var(--spacing-md);
+.glazewm-workspaces .ws-btn.focused_populated,
+.glazewm-workspaces .ws-btn.focused_empty {
+  color: #1e2127;
+  background-color: #61afef;
 }
 
-/* =============================================================================
-   SYSTEM MONITORING WIDGETS
-   ============================================================================= */
-
-.memory-widget .label.status-critical {
-  color: var(--red);
+.glazewm-workspaces .ws-btn:hover {
+  background-color: rgba(97, 175, 239, 0.25);
 }
 
-.memory-widget .icon,
+.glazewm-workspaces .offline-status {
+  color: #e06c75;
+}
+
+.glazewm-binding-mode .label {
+  color: #1e2127;
+  background-color: #e5c07b;
+  border-radius: 6px;
+  margin: 6px 0;
+  padding: 0 8px;
+  font-weight: 600;
+}
+
+.active-window-widget .label {
+  color: #d7dae0;
+}
+
+/* --- center ------------------------------------------------------------- */
+
+.media-widget .label {
+  color: #98c379;
+}
+
+.media-widget .btn {
+  color: #abb2bf;
+  padding: 0 4px;
+}
+
+.media-widget .btn:hover {
+  color: #61afef;
+}
+
+/* --- status: quiet grey, colour only when something needs attention ----- */
+
+.systray .unpinned-visibility-btn {
+  font-family: "JetBrainsMono NF";
+  color: #5c6370;
+  border: none;
+  padding: 0 4px;
+}
+
+.systray .button {
+  padding: 0 3px;
+  border-radius: 4px;
+}
+
+.systray .button:hover {
+  background-color: rgba(171, 178, 191, 0.12);
+}
+
+.cpu-widget .label,
+.memory-widget .label,
+.volume-widget .label,
+.wifi-widget .label,
+.battery-widget .label {
+  color: #828997;
+}
+
 .cpu-widget .icon,
+.memory-widget .icon,
+.volume-widget .icon,
+.wifi-widget .icon,
 .battery-widget .icon {
-  margin-bottom: 1.5px;
+  color: #abb2bf;
+}
+
+.cpu-widget .label.status-critical,
+.memory-widget .label.status-critical,
+.cpu-widget .status-critical .icon,
+.memory-widget .status-critical .icon {
+  color: #e06c75;
+}
+
+.volume-widget .label.muted,
+.volume-widget .muted .icon {
+  color: #4b5263;
+}
+
+.battery-widget .status-low .icon {
+  color: #e5c07b;
+}
+.battery-widget .status-critical .icon {
+  color: #e06c75;
+}
+.battery-widget .status-charging .icon {
+  color: #98c379;
+}
+
+.notification-widget .icon,
+.notification-widget .label {
+  color: #e5c07b;
+}
+
+.clock-widget .label {
+  color: #e5e9f0;
+  font-weight: 600;
+}
+
+/* --- popups ------------------------------------------------------------- */
+
+.audio-menu,
+.wifi-menu,
+.media-menu,
+.clock-popup {
+  background-color: rgba(40, 44, 52, 0.98);
 }

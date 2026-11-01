@@ -130,7 +130,7 @@
     "AnimationSpeed": "Medium",
     "CustomAnimationLength": 360,
     "PluginSettings": {
-        "PythonExecutablePath": "C:\\Users\\ARHUN.SADAY\\AppData\\Roaming\\FlowLauncher\\Environments\\Python\\PythonEmbeddable-v3.8.9\\pythonw.exe",
+        "PythonExecutablePath": "",
         "NodeExecutablePath": "",
         "Plugins": {
             "0ECADE17459B49F587BF81DC3A125110": {

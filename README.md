@@ -16,6 +16,29 @@ Packages named `~macos` / `~linux` / `~windows` are stowed only on the matching
 platform, and `~work` / `~perso` only for the selected environment. Put anything
 that differs between the work and personal machine (git identity, ...) in those.
 
+## Windows
+
+Works without admin rights. Symlinks need admin on Windows, so instead of stow
+`~windows/setup.ps1` points each tool at this repo (env vars, include stubs,
+or a copy for apps that rewrite their own settings):
+
+```sh
+./dotfiles.sh install work    # from Git Bash, runs ~windows/setup.ps1
+```
+
+It installs [Scoop](https://scoop.sh) and the apps in `~windows/scoop-apps.txt`,
+then Claude Code, and adds GlazeWM, YASB (top bar), AutoHotkey, WinCompose and
+Keypirinha to the Startup folder.
+
+|                    |                                                       |
+| ------------------ | ----------------------------------------------------- |
+| GlazeWM            | tiling, same keys as AeroSpace (`alt-hjkl`, `alt-1..4`, `alt-qwer`, ...) |
+| `CapsLock`         | Ctrl when held, Escape when tapped                    |
+| `RAlt` + a/t/c/f   | Firefox, Windows Terminal, VS Code, Explorer          |
+| `Alt-Shift-D`      | toggle dark/light (`theme dark\|light` in bash)        |
+| `wallpaper <img>`  | set the wallpaper, even though Settings blocks it     |
+| `Alt-Space`        | Keypirinha (also `CapsLock-Space`)                    |
+
 ## Secrets
 
 Every API key and token lives in **one file outside this repo**, so nothing

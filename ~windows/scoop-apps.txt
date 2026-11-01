@@ -1,0 +1,50 @@
+# Apps installed by setup.ps1 through Scoop (user-level, no admin needed).
+# One "bucket/app" per line; '#' starts a comment. Re-run setup.ps1 after editing.
+
+# Needed by Scoop itself to unpack most packages
+main/7zip
+
+# Shell
+main/starship
+main/neovim
+main/win32yank
+main/fzf
+main/fd
+main/ripgrep
+main/bat
+main/eza
+main/zoxide
+main/jq
+main/yq
+main/tealdeer
+main/mise
+
+# Git
+main/delta
+main/gh
+main/glab
+extras/lazygit
+
+# Kubernetes / cloud
+main/kubectl
+main/helm
+main/k9s
+main/argocd
+main/terraform
+
+# Desktop
+extras/glazewm
+extras/yasb
+extras/autohotkey
+extras/windows-terminal
+extras/wezterm
+extras/rio
+extras/keypirinha
+# extras/flow-launcher  (replaced by Keypirinha: ~400MB less RAM; config kept)
+extras/wincompose
+extras/sharex
+# extras/powertoys
+
+# Fonts (installed per-user)
+nerd-fonts/JetBrainsMono-NF
+nerd-fonts/JetBrainsMono-NF-Mono
