@@ -34,3 +34,9 @@ secrets.env
 *.secrets.env
 .env
 .envrc
+.local/bin/
+
+# Corepack shims: pnpm, pnpx, yarn, yarnpkg
+scripts/.local/bin/[py][na][pr]*
+scripts/.local/bin/python3.13
+scripts/.local/bin/relay
