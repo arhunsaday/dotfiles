@@ -2,6 +2,7 @@
 
 # Same single secrets file as zsh (see zsh/.config/zsh/exports.zsh, secrets.env.example)
 export SECRETS_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/secrets.env"
+export SECRETS_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/secrets"
 if [ -r "$SECRETS_FILE" ]; then
   . "$SECRETS_FILE"
 fi
@@ -142,9 +143,9 @@ cht() {
   curl "https://cheat.sh/${1:?Usage: cht <command>}"
 }
 
-# Manage the single secrets file ($SECRETS_FILE) — same as secrets() in functions.zsh
+# Manage the single secrets file ($SECRETS_FILE) and key folder ($SECRETS_DIR) — same as secrets() in functions.zsh
 secrets() {
-  local file=$SECRETS_FILE
+  local file=$SECRETS_FILE dir=$SECRETS_DIR
   case ${1:-edit} in
     edit|e)
       [ -e "$file" ] || { mkdir -p "$(dirname "$file")" && install -m 600 /dev/null "$file"; }
@@ -157,9 +158,11 @@ secrets() {
     list|ls|l)
       [ -r "$file" ] || { echo "secrets: no $file" >&2; return 1; }
       sed -nE 's/^[[:space:]]*export[[:space:]]+([A-Za-z_][A-Za-z0-9_]*)=.*/  \1/p' "$file"
+      [ -d "$dir" ] && find "$dir" -type f | sed "s|^$dir/|  secrets/|"
       ;;
     path|p) echo "$file" ;;
-    *) echo "usage: secrets [edit|reload|list|path]" >&2; return 1 ;;
+    dir|d) echo "$dir" ;;
+    *) echo "usage: secrets [edit|reload|list|path|dir]" >&2; return 1 ;;
   esac
 }
 

@@ -167,9 +167,10 @@ function watch_dir() {
 
     fswatch -o "$dir_to_watch" | xargs -n1 -I{} bash -c 'clear; '"$command_to_run"
 }
-# Manage the single secrets file ($SECRETS_FILE, see exports.zsh)
+# Manage the single secrets file ($SECRETS_FILE) and key folder ($SECRETS_DIR, see exports.zsh)
 secrets() {
   local file=${SECRETS_FILE:-${XDG_CONFIG_HOME:-$HOME/.config}/secrets.env}
+  local dir=${SECRETS_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/secrets}
   case ${1:-edit} in
     edit|e)
       [[ -e $file ]] || { mkdir -p "${file:h}" && install -m 600 /dev/null "$file" }
@@ -183,8 +184,10 @@ secrets() {
       # names only — printing values into scrollback defeats the point
       [[ -r $file ]] || { echo "secrets: no $file" >&2; return 1 }
       sed -nE 's/^[[:space:]]*export[[:space:]]+([A-Za-z_][A-Za-z0-9_]*)=.*/  \1/p' "$file"
+      [[ -d $dir ]] && find "$dir" -type f | sed "s|^$dir/|  $dir:t/|"
       ;;
     path|p)  echo "$file" ;;
+    dir|d)   echo "$dir" ;;
     *)
       cat >&2 <<USAGE
 
@@ -192,10 +195,12 @@ secrets() {
 
     secrets edit     open it in \$EDITOR, then reload this shell
     secrets reload   re-source it after an external edit
-    secrets list     variable names only, never values
+    secrets list     variable names and key file names, never values
     secrets path     print the file path
+    secrets dir      print the key folder path
 
   Lives at $file, mode 0600, outside the dotfiles repo.
+  Key files (SSH, GPG, certs, JSON) go in $dir, mode 0700.
 
 USAGE
       return 1 ;;

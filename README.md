@@ -46,12 +46,14 @@ secret can be committed:
 
 ```
 ~/.config/secrets.env      # mode 0600, never tracked
+~/.config/secrets/         # mode 0700, key files: SSH, GPG, certs, JSON
 secrets.env.example        # the tracked template
 ```
 
-`./dotfiles.sh install` creates it from the template when it is missing, tightens
-its permissions if they drifted, and reports either way. `./dotfiles.sh uninstall`
-never deletes it.
+`./dotfiles.sh install` creates both when they are missing, tightens their
+permissions if they drifted, and reports either way. `./dotfiles.sh uninstall`
+never deletes them. `$SECRETS_DIR` is exported before `secrets.env` is sourced,
+so a variable can point at a key file: `export FOO_KEY_FILE="$SECRETS_DIR/foo.pem"`.
 
 It is sourced from `~/.zshenv` and `~/.bashrc` — so scripts, cron jobs and editor
 plugins get the keys too, not just interactive shells. Keep it to plain
@@ -59,9 +61,10 @@ plugins get the keys too, not just interactive shells. Keep it to plain
 
 ```sh
 secrets edit     # open in $EDITOR, then reload this shell
-secrets list     # variable names only, never values
+secrets list     # variable and key file names, never values
 secrets reload   # re-source after an external edit
 secrets path     # print the file path
+secrets dir      # print the key folder path
 ```
 
 ## AI shell assistant

@@ -53,7 +53,11 @@ export PATH=/var/lib/flatpak/exports/bin:$HOME/.cargo/bin:$HOME/.deno/bin:$HOME/
 #
 # Loaded from .zshenv rather than .zshrc so scripts and non-interactive shells
 # get the keys too — a cron job or an editor plugin has no interactive shell.
+#
+# Secrets that are files (keys, certs, service-account JSON) go in $SECRETS_DIR,
+# exported first so secrets.env can point at them: FOO_KEY_FILE=$SECRETS_DIR/foo.pem
 export SECRETS_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/secrets.env"
+export SECRETS_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/secrets"
 if [[ -r $SECRETS_FILE ]]; then
   # a readable-by-anyone key file is worse than no key file
   _secrets_perm=$(stat -f '%OLp' "$SECRETS_FILE" 2>/dev/null || stat -c '%a' "$SECRETS_FILE" 2>/dev/null)

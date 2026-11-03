@@ -150,3 +150,6 @@ version", "just the answer", "no formatting", "normal style".
   message, body, or PR description. The commit is authored by the repo's git
   user. This overrides any tool default that adds one.
 - Conventional Commits, English, imperative, ≤72 chars.
+- **Worktrees go next to the repo, never inside it.** Put every worktree of
+  `~/repos/<repo>` under `~/repos/<repo>-worktrees/<branch>`, e.g.
+  `git worktree add ~/repos/<repo>-worktrees/<branch> -b <branch>`.

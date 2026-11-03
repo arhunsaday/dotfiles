@@ -116,7 +116,9 @@ usage() {
     Every API key and token lives in one file outside this repo,
     $(tilde "${XDG_CONFIG_HOME:-$HOME/.config}/secrets.env"), created from
     secrets.env.example on install if it is missing. Edit it with \`secrets edit\`.
-    Uninstall never deletes it.
+    Key files (SSH, GPG, certs, service-account JSON...) go in
+    $(tilde "${XDG_CONFIG_HOME:-$HOME/.config}/secrets/"), mode 700, also created on install.
+    Uninstall never deletes either.
 
   ${BOLD}Options${RESET}
     --dry-run, -n   show what would change, write nothing
@@ -261,6 +263,7 @@ unstow_other_environments() {
 # --------------------------------------------------------------- secrets ----
 
 SECRETS_FILE_PATH="${XDG_CONFIG_HOME:-$HOME/.config}/secrets.env"
+SECRETS_DIR_PATH="${XDG_CONFIG_HOME:-$HOME/.config}/secrets"
 
 # The one file holding every API key. It lives outside this repo on purpose, so
 # stow cannot create it — do that here, and always say where it stands.
@@ -301,6 +304,37 @@ setup_secrets() {
         return 1
     }
     report "$GREEN" "✔" "secrets.env" "created at $(tilde "$file") — empty, fill it with 'secrets edit'"
+}
+
+# The folder next to it for secrets that are files, not variables: key pairs,
+# certificates, service-account JSON. Mode 700 covers whatever is put inside.
+setup_secrets_dir() {
+    local dir="$SECRETS_DIR_PATH"
+    local files perm
+
+    if [[ -d "$dir" ]]; then
+        files=$(find "$dir" -type f | wc -l | tr -d ' ')
+        perm=$(stat -f '%OLp' "$dir" 2>/dev/null || stat -c '%a' "$dir" 2>/dev/null)
+        if [[ "$perm" != "700" ]]; then
+            $DRY_RUN || chmod 700 "$dir"
+            report "$YELLOW" "!" "secrets/" "$(plural "${files:-0}" file) · mode $perm → 700"
+        else
+            report "$DIM" "·" "secrets/" "$(plural "${files:-0}" file) · $(tilde "$dir")"
+        fi
+        return 0
+    fi
+
+    if $DRY_RUN; then
+        report "$YELLOW" "◌" "secrets/" "would create $(tilde "$dir")"
+        return 0
+    fi
+
+    mkdir -p -m 700 "$dir" || {
+        FAILED=$((FAILED + 1))
+        report "$RED" "✖" "secrets/" "could not create $(tilde "$dir")"
+        return 1
+    }
+    report "$GREEN" "✔" "secrets/" "created at $(tilde "$dir") — drop key files in it"
 }
 
 # ------------------------------------------------------------------ main ----
@@ -366,6 +400,7 @@ if [[ "$ACTION" == "install" ]]; then
     done
 
     setup_secrets
+    setup_secrets_dir
 
     $DRY_RUN || echo "$ENVIRONMENT" > "$ENV_FILE"
 else
@@ -380,9 +415,10 @@ else
     unstow_other_environments "$ENVIRONMENT"
 
     # never delete real credentials on the way out, but do not leave them unmentioned
-    if [[ -f "$SECRETS_FILE_PATH" ]]; then
+    if [[ -f "$SECRETS_FILE_PATH" || -d "$SECRETS_DIR_PATH" ]]; then
         section "secrets"
-        report "$DIM" "·" "secrets.env" "kept — $(tilde "$SECRETS_FILE_PATH")"
+        [[ -f "$SECRETS_FILE_PATH" ]] && report "$DIM" "·" "secrets.env" "kept — $(tilde "$SECRETS_FILE_PATH")"
+        [[ -d "$SECRETS_DIR_PATH" ]] && report "$DIM" "·" "secrets/" "kept — $(tilde "$SECRETS_DIR_PATH")"
     fi
 
     $DRY_RUN || rm -f "$ENV_FILE"
