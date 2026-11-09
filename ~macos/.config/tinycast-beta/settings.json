@@ -13,13 +13,13 @@
     "theme": "system",
     "animations": true,
     "interfaceSize": "standard",
-    "compactMode": true,
+    "compactMode": false,
     "compactBarCommands": [],
     "followCursorAcrossDisplays": true,
     "dragToReposition": false
   },
   "hyperKey": {
-    "key": "rightCommand",
+    "key": "none",
     "includesShift": true,
     "quickPress": "none",
     "secureInputCompatibility": false
@@ -74,6 +74,7 @@
     "enabled": true,
     "webSearch": true,
     "choices": true,
+    "expandsReasoning": false,
     "systemPrompt": "",
     "systemPromptEnabled": true,
     "retentionDays": "forever",
@@ -82,12 +83,12 @@
     "toolRounds": 25,
     "commands": {
       "ai-chat": {
-        "shortcut": "hyper+a",
+        "shortcut": "ctrl+option+shift+cmd+a",
         "alias": null,
         "showInLauncher": true
       },
       "ai-chat-window": {
-        "shortcut": "hyper+g",
+        "shortcut": "ctrl+option+shift+cmd+g",
         "alias": null,
         "showInLauncher": true
       }
@@ -99,7 +100,7 @@
   },
   "dictation": {
     "mode": "toggle",
-    "shortcut": "hyper+d",
+    "shortcut": "ctrl+option+shift+cmd+d",
     "playsSounds": true,
     "model": "redux",
     "microphone": null,
@@ -119,7 +120,7 @@
     "showInLauncher": true,
     "commands": {
       "search-files": {
-        "shortcut": "hyper+s",
+        "shortcut": "ctrl+option+shift+cmd+s",
         "alias": null,
         "showInLauncher": true
       }
@@ -133,7 +134,7 @@
     "folder": null,
     "commands": {
       "show-notes": {
-        "shortcut": "hyper+n",
+        "shortcut": "ctrl+option+shift+cmd+n",
         "alias": null,
         "showInLauncher": true
       }
@@ -142,6 +143,7 @@
   "snippets": {
     "showInLauncher": true,
     "folder": null,
+    "defaultAction": "paste",
     "commands": {}
   },
   "navigation": {
@@ -155,6 +157,8 @@
     "showInLauncher": true,
     "gap": 0,
     "cycle": "off",
+    "wrapDisplays": true,
+    "keepProportions": true,
     "layoutsShowInLauncher": true,
     "roomsShowInLauncher": true,
     "shortcuts": {
@@ -188,6 +192,10 @@
       "move-right": null,
       "move-up": null,
       "move-down": null,
+      "move-to-left-edge": null,
+      "move-to-right-edge": null,
+      "move-to-top-edge": null,
+      "move-to-bottom-edge": null,
       "next-display": null,
       "previous-display": null,
       "toggle-fullscreen": null,
@@ -210,7 +218,7 @@
     ],
     "commands": {
       "clipboard-history": {
-        "shortcut": "hyper+v",
+        "shortcut": "ctrl+option+shift+cmd+v",
         "alias": null,
         "showInLauncher": true
       }
@@ -221,7 +229,7 @@
     "gridColumns": 8,
     "commands": {
       "search-emoji": {
-        "shortcut": "hyper+e",
+        "shortcut": "ctrl+option+shift+cmd+e",
         "alias": null,
         "showInLauncher": true
       }

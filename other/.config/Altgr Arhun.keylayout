@@ -526,7 +526,7 @@
             <key code="21" output=""/>
             <key code="22" action="a52"/>
             <key code="23" output=""/>
-            <key code="24" output="≠"/>
+            <key code="24" output="€"/>
             <key code="25" output=""/>
             <key code="26" output=""/>
             <key code="27" output="—"/>
@@ -658,7 +658,7 @@
             <key code="41" output="·"/>
             <key code="42" output="Ĳ"/>
             <key code="43" output="Ò"/>
-            <key code="44" output="£"/>
+            <key code="44" output="¿"/>
             <key code="45" output="Ñ"/>
             <key code="46" output="Ì"/>
             <key code="47" output="Œ"/>

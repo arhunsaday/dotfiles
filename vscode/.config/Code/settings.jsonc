@@ -242,7 +242,8 @@
   "github.copilot.editor.enableAutoCompletions": true,
   "editor.inlineSuggest.enabled": true,
   "github.copilot.enable": {
-    "*": true,
+    "*": false,
+    "plaintext": false,
     "markdown": true,
     "scminput": false,
     "shellscript": true,
@@ -325,7 +326,7 @@
     // ".letterpress": "background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDQ4IDQ4Ij48IS0tIEljb24gZnJvbSBJY29uUGFyayBTb2xpZCBieSBCeXRlRGFuY2UgLSBodHRwczovL2dpdGh1Yi5jb20vYnl0ZWRhbmNlL0ljb25QYXJrL2Jsb2IvbWFzdGVyL0xJQ0VOU0UgLS0+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYzBjMGMwIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iNCI+PHBhdGggZmlsbD0iI2MwYzBjMCIgZD0iTTUgMTJjMy42NjQtNC4yOTQgMTQuMDgxIDYuODIgMTkgMTNjNC45Mi02LjE4IDE1LjMzNy0xNy4yOTQgMTktMTNjLjY3OS42NSAxLjQ0MyAyLjg3Ny0xIDZjLS42NzguOTc2LTEuODE0IDMuNzA2LTEgOGMwIDEuMTM5LTEuMTE1IDIuOTUyLTYgMWMyLjM3NSAxLjYyNyA2Ljg1IDYuMDk2IDQgMTBjLTIuNzE0IDMuNDE2LTkuMDM1IDcuNDU3LTEzLTJsLTItNGwtMiA0Yy0zLjk2NCA5LjQ1Ny0xMC4yODYgNS40MTYtMTMgMmMtMi44NS0zLjkwNCAxLjYyNi04LjM3MyA0LTEwYy00Ljg4NSAxLjk1Mi02IC4xMzktNi0xYy44MTQtNC4yOTQtLjMyMS03LjAyNC0xLThjLTIuNDQyLTMuMTIzLTEuNjc4LTUuMzUtMS02Ii8+PHBhdGggZD0iTTI0LjAzMiAyM0MyMy41MzQgMTcuODY0IDI4LjkxMyA3IDMzIDciLz48cGF0aCBkPSJNMjMuOTY4IDIzQzI0LjQ2NiAxNy44NjQgMTkuMDg3IDcgMTUgNyIvPjwvZz48L3N2Zz4=) !important; opacity: 0.1;",
     ".letterpress": "background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDQ4IDQ4Ij48IS0tIEljb24gZnJvbSBJY29uUGFyayBTb2xpZCBieSBCeXRlRGFuY2UgLSBodHRwczovL2dpdGh1Yi5jb20vYnl0ZWRhbmNlL0ljb25QYXJrL2Jsb2IvbWFzdGVyL0xJQ0VOU0UgLS0+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDAwMDAwIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iNCI+PHBhdGggZmlsbD0iIzAwMDAwMCIgZD0iTTUgMTJjMy42NjQtNC4yOTQgMTQuMDgxIDYuODIgMTkgMTNjNC45Mi02LjE4IDE1LjMzNy0xNy4yOTQgMTktMTNjLjY3OS42NSAxLjQ0MyAyLjg3Ny0xIDZjLS42NzguOTc2LTEuODE0IDMuNzA2LTEgOGMwIDEuMTM5LTEuMTE1IDIuOTUyLTYgMWMyLjM3NSAxLjYyNyA2Ljg1IDYuMDk2IDQgMTBjLTIuNzE0IDMuNDE2LTkuMDM1IDcuNDU3LTEzLTJsLTItNGwtMiA0Yy0zLjk2NCA5LjQ1Ny0xMC4yODYgNS40MTYtMTMgMmMtMi44NS0zLjkwNCAxLjYyNi04LjM3MyA0LTEwYy00Ljg4NSAxLjk1Mi02IC4xMzktNi0xYy44MTQtNC4yOTQtLjMyMS03LjAyNC0xLThjLTIuNDQyLTMuMTIzLTEuNjc4LTUuMzUtMS02Ii8+PHBhdGggZD0iTTI0LjAzMiAyM0MyMy41MzQgMTcuODY0IDI4LjkxMyA3IDMzIDciLz48cGF0aCBkPSJNMjMuOTY4IDIzQzI0LjQ2NiAxNy44NjQgMTkuMDg3IDcgMTUgNyIvPjwvZz48L3N2Zz4=) !important; opacity: 0.3;",
     // ".letterpress": "background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDI0IDI0Ij48IS0tIEljb24gZnJvbSBMdWNpZGUgTGFiIGJ5IEx1Y2lkZSBDb250cmlidXRvcnMgLSBodHRwczovL2dpdGh1Yi5jb20vbHVjaWRlLWljb25zL2x1Y2lkZS1sYWIvYmxvYi9tYWluL0xJQ0VOU0UgLS0+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDAwMDAwIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMiI+PHBhdGggZD0iTTE1LjggMkMxMiAzLjggMTIgOSAxMiA5czAtNS4yLTMuOC03TTEyIDl2MTEiLz48cGF0aCBkPSJNMjAgNWMtMy41IDAtNi41IDMuOS04IDYuM0MxMC41IDguOSA3LjUgNSA0IDVhMiAyIDAgMCAwLTIgMmMwIDIuMy42IDQuNCAxLjUgNS42QzQgMTMuNSA0LjkgMTQgNiAxNGgyYy0uOS40LTIuMS45LTIuNiAxLjVjLTEuNiAxLjYtLjkgMy40LjcgNC45YzEuNiAxLjYgMy40IDIuMyA0LjkuN2MuMy0uMyAxLTEuMSAxLTEuMXMuNi44IDEgMS4xYzEuNiAxLjYgMy40LjkgNC45LS43YzEuNi0xLjYgMi4zLTMuNC43LTQuOWMtLjUtLjUtMS43LTEuMS0yLjYtMS41aDJjMS4xIDAgMi0uNSAyLjUtMS40Yy45LTEuMiAxLjUtMy4zIDEuNS01LjZhMiAyIDAgMCAwLTItMiIvPjwvZz48L3N2Zz4=) !important; opacity: 0.4;",
-    ".shortcuts": "display: none !important;",
+    // ".shortcuts": "display: none !important;",
     ".monaco-workbench .part>.title": "padding-left: 2px !important; padding-right: 2px !important;",
     ".sidebar.right .composite-bar-container": "flex-direction: row-reverse !important;",
     ".title-label": "display: none !important",
@@ -344,6 +345,7 @@
   // "custom-ui-style.background.syncURL": "https://i.imgur.com/jFfrwpv.png", // firewatch blue
   // "custom-ui-style.background.syncURL": "https://i.imgur.com/8LWcZiM.jpeg", // edgerunners hack
   // "custom-ui-style.background.syncURL": "https://i.imgur.com/gQZiHhb.jpeg", // edgerunners rebecca
+  // "custom-ui-style.background.syncURL": "https://wallpapers.com/images/hd/shinzou-wo-sasageyo-eren-yeager-1e02id3m1l336h3r.jpg", // attaque des titans
   // "custom-ui-style.background.syncURL": "https://i.imgur.com/oQJwEQL.jpeg", // sunset
   // Gitlens
   "gitlens.views.stashes.files.layout": "tree",
@@ -1464,7 +1466,7 @@
   "geminicodeassist.project": "reflected-altar-hsdh5",
   "geminicodeassist.inlineSuggestions.enableAuto": false,
   "chat.tips.enabled": false,
-  "git.blame.statusBarItem.enabled": true,
+  "git.blame.statusBarItem.enabled": false,
   "git.replaceTagsWhenPull": true,
   "chat.tools.urls.autoApprove": {
     "https://code.visualstudio.com": true,

@@ -40,6 +40,8 @@ future_days = 90
 privacy = "full"
 exclude_summaries = [
     "Jour férié",
+    "En congé",
+    "Travail sur ÉS",
 ]
 weekday_only_summaries = []
 delete_min = 5
