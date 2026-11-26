@@ -40,3 +40,5 @@ secrets.env
 scripts/.local/bin/[py][na][pr]*
 scripts/.local/bin/python3.13
 scripts/.local/bin/relay
+scripts/.local/bin/claude-swap
+scripts/.local/bin/cswap

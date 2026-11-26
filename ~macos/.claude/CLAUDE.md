@@ -44,8 +44,8 @@ Every changed line should trace directly to what I asked for.
 
 ## Sub-agents
 
-- **Never Fable.** Prefer Sonnet, use Opus when necessary.
-- **Never more than 5 at a time.**
+- **Never Fable.** Prefer Sonnet but use Opus when necessary.
+- **Never more than 8 at a time.**
 - Use them liberally to keep the main context clean — research, exploration, parallel analysis. One task per sub-agent.
 
 ## Papercuts
